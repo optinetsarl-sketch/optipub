@@ -876,19 +876,30 @@ async function publishStudio(){
   const videoUrl=document.getElementById('st-video').value.trim();
   const service=document.getElementById('st-service').value;
   const destinations=Array.from(document.querySelectorAll('#page-studio .st-dest.st-dest-on')).map(d=>d.dataset.d);
-  if(!titre){ stMsg('Le titre est requis.'); return; }
-  if(!destinations.length){ stMsg('Choisissez au moins une destination.'); return; }
-  if(!stFiles.length){ stMsg('Ajoutez au moins une photo.'); return; }
+  if(!titre){ toast('Le titre est requis.','err'); return; }
+  if(!destinations.length){ toast('Choisissez au moins une destination.','err'); return; }
+  if(!stFiles.length){ toast('Ajoutez au moins une photo.','err'); return; }
   const btn=document.getElementById('st-pub'); btn.disabled=true; const old=btn.textContent; btn.textContent='Publication en cours…';
+  showLoading('Envoi des photos et publication…');
   try{
+    // 1) upload des photos (+ filigrane)
     const fd=new FormData(); stFiles.forEach(f=>fd.append('files',f));
     const up=await fetch(API+'/uploads',{method:'POST',headers:{Authorization:'Bearer '+TOKEN},body:fd});
-    const upj=await up.json();
-    if(!up.ok) throw new Error(upj.message||'Upload des photos échoué');
+    let upj={}; try{ upj=await up.json(); }catch(_){}
+    if(!up.ok) throw new Error(upj.message||('Envoi des photos échoué (HTTP '+up.status+')'));
+    // 2) publication (site + réseaux)
     const d=await api('POST','/posts/actualite',{titre,contenu,categorie:stCat,service,videoUrl,media:upj.media,destinations});
-    stRenderResults(d.results||[]);
-  }catch(e){ stMsg(e.message); }
-  finally{ btn.disabled=false; btn.textContent=old; }
+    const results=d.results||[];
+    stRenderResults(results);
+    const okCount=results.filter(r=>r.status==='published').length;
+    if(okCount) toast('✅ Publié sur '+okCount+' destination(s) !','ok');
+    else toast('❌ Échec — voir le détail sous le bouton.','err');
+  }catch(e){
+    stMsg(e.message);
+    toast(e.message||'Erreur lors de la publication','err');
+  } finally{
+    btn.disabled=false; btn.textContent=old; hideLoading();
+  }
 }
 function stRenderResults(results){
   document.getElementById('st-results-card').style.display='block';
