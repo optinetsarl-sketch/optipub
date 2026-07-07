@@ -1,0 +1,11 @@
+# Dépendances
+node_modules/
+
+# Variables d'environnement (contient des secrets : App Secret, JWT, tokens)
+.env
+
+# Médias uploadés
+uploads/
+
+# Logs
+*.log

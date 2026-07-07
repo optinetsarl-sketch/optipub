@@ -1,0 +1,15 @@
+# Dépendances
+**/node_modules/
+
+# Secrets / configuration (JAMAIS sur GitHub)
+**/.env
+**/.env.production
+!**/.env.example
+
+# Médias uploadés (persistés via volume Docker)
+app/backend/uploads/
+
+# Divers
+.DS_Store
+*.log
+npm-debug.log*

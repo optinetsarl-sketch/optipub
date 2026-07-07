@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OPTIPUB Studio — Journal</title>
+<style>
+  :root{
+    --ground:#04101f; --surface:#0a1526; --surface2:#0e1d31; --border:#17293f;
+    --ink:#eaf2fa; --muted:#9fb3c8; --faint:#63798f; --accent:#1cb6d8; --accentink:#04101f;
+    --green:#16c079; --red:#ff5a5f;
+    --fb:#2a5fd0; --ig:#c13584; --li:#0a66c2;
+    --mono:ui-monospace,"Cascadia Code",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.6}
+  a{color:var(--accent)}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:5}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#1de9b6);display:grid;place-items:center;color:var(--accentink);font-weight:800;font-family:var(--mono)}
+  .top h1{font-size:1.05rem;margin:0;font-weight:800;letter-spacing:-.01em}
+  .top .sub{font-family:var(--mono);font-size:.7rem;color:var(--faint);letter-spacing:.08em;text-transform:uppercase}
+  .top .right{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:.85rem;color:var(--muted)}
+  .btn{border:none;border-radius:10px;padding:11px 16px;font-weight:800;font-size:.92rem;cursor:pointer;font-family:inherit}
+  .btn-accent{background:var(--accent);color:var(--accentink)}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 20px 60px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px}
+  label.lbl{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:0 0 7px}
+  input[type=text],input[type=email],input[type=password],input[type=url],textarea,select{
+    width:100%;background:var(--ground);border:1px solid var(--border);border-radius:10px;
+    padding:12px 14px;color:var(--ink);font-size:.95rem;font-family:inherit}
+  textarea{min-height:120px;resize:vertical}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+  .field{margin-bottom:16px}
+  .cats{display:flex;gap:8px;flex-wrap:wrap}
+  .cat{padding:8px 14px;border-radius:22px;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:.85rem;font-weight:700}
+  .cat.on{background:var(--accent);border-color:var(--accent);color:var(--accentink)}
+  .drop{border:1.5px dashed #2a4a63;border-radius:12px;padding:16px;text-align:center;color:var(--muted);cursor:pointer;background:rgba(28,182,216,.05)}
+  .drop:hover{border-color:var(--accent)}
+  .previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .pv{position:relative;width:78px;height:78px;border-radius:9px;overflow:hidden;border:1px solid var(--border)}
+  .pv img{width:100%;height:100%;object-fit:cover;display:block}
+  .pv button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:var(--red);color:#fff;cursor:pointer;font-size:12px;line-height:20px;padding:0}
+  .dests{display:flex;flex-direction:column;gap:10px}
+  .dest{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:11px;background:var(--surface2);cursor:pointer}
+  .dest .ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:.85rem}
+  .dest .nm{font-weight:700;font-size:.92rem}
+  .dest .sw{margin-left:auto;width:40px;height:23px;border-radius:22px;background:var(--faint);position:relative;transition:.15s;flex:0 0 auto}
+  .dest.on .sw{background:var(--green)}
+  .dest .sw::after{content:"";position:absolute;top:2.5px;left:2.5px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s}
+  .dest.on .sw::after{left:19px}
+  .note{font-size:.8rem;color:var(--muted);display:flex;gap:8px;margin-top:14px}
+  .results{margin-top:6px;display:flex;flex-direction:column;gap:10px}
+  .res{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:11px;border:1px solid var(--border)}
+  .res.ok{background:rgba(22,192,121,.1);border-color:rgba(22,192,121,.4)}
+  .res.ko{background:rgba(255,90,95,.09);border-color:rgba(255,90,95,.4)}
+  .res .st{font-size:1.1rem}
+  .res .txt{font-size:.88rem}
+  .res .txt small{display:block;color:var(--muted);font-size:.76rem;word-break:break-all}
+  .hide{display:none}
+  h2.section{font-size:1.15rem;margin:0 0 4px}
+  p.help{color:var(--muted);font-size:.86rem;margin:0 0 18px}
+  .msg{padding:11px 14px;border-radius:10px;font-size:.88rem;margin-bottom:14px}
+  .msg.err{background:rgba(255,90,95,.12);color:#ffb3b5;border:1px solid rgba(255,90,95,.4)}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="logo">ON</div>
+    <div>
+      <h1>OPTIPUB Studio</h1>
+      <div class="sub">Journal · publier partout</div>
+    </div>
+    <div class="right">
+      <a href="/" class="btn-ghost btn" style="text-decoration:none">← OPTIPUB</a>
+      <span id="who"></span>
+      <button id="logoutBtn" class="btn btn-ghost hide" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- LOGIN -->
+    <div id="loginCard" class="card hide" style="max-width:420px;margin:40px auto">
+      <h2 class="section">Connexion</h2>
+      <p class="help">Connectez-vous avec votre compte OPTIPUB.</p>
+      <div id="loginMsg"></div>
+      <div class="field"><label class="lbl">Email</label><input id="email" type="email" placeholder="optinetsarl@gmail.com" /></div>
+      <div class="field"><label class="lbl">Mot de passe</label><input id="password" type="password" placeholder="••••••••" /></div>
+      <button class="btn btn-accent" style="width:100%" onclick="login()">Se connecter</button>
+    </div>
+
+    <!-- STUDIO -->
+    <div id="studio" class="hide">
+      <div class="card">
+        <h2 class="section">Nouvelle publication</h2>
+        <p class="help">Racontez l'intervention, ajoutez vos photos et un lien YouTube, choisissez où publier.</p>
+        <div id="formMsg"></div>
+
+        <div class="field">
+          <label class="lbl">Titre</label>
+          <input id="titre" type="text" placeholder="Ex : Déploiement fibre optique — siège CNSS Lomé" />
+        </div>
+
+        <div class="field">
+          <label class="lbl">Catégorie</label>
+          <div class="cats" id="cats">
+            <span class="cat on" data-c="intervention">Intervention terrain</span>
+            <span class="cat" data-c="realisation">Réalisation</span>
+            <span class="cat" data-c="actualite">Actualité</span>
+            <span class="cat" data-c="annonce">Annonce &amp; Info</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="lbl">Service concerné (l'annonce apparaîtra sur la page de ce service)</label>
+          <select id="service">
+            <option value="">— Aucun —</option>
+            <option value="reseaux">Réseaux &amp; Infrastructure</option>
+            <option value="securite">Sécurité &amp; Surveillance</option>
+            <option value="fibre">Fibre Optique &amp; Télécoms</option>
+            <option value="serveurs">Serveurs &amp; Virtualisation</option>
+            <option value="telephonie">Téléphonie d'Entreprise</option>
+            <option value="conseil">Conseil &amp; Formation</option>
+            <option value="developpement">Développement &amp; Applications</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="lbl">Récit</label>
+          <textarea id="contenu" placeholder="Décrivez l'intervention : ce qui a été fait, où, pour qui, le résultat…"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="lbl">Lien vidéo YouTube (facultatif)</label>
+          <input id="videoUrl" type="url" placeholder="https://youtu.be/…" />
+        </div>
+
+        <div class="field">
+          <label class="lbl">Photos</label>
+          <div class="drop" id="drop">📷 Cliquez pour ajouter des photos (la 1ʳᵉ sera la photo de couverture)</div>
+          <input id="fileInput" type="file" accept="image/*" multiple class="hide" />
+          <div class="previews" id="previews"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label class="lbl">Publier vers</label>
+        <div class="dests" id="dests">
+          <div class="dest on" data-d="journal"><span class="ic" style="background:var(--accent)">🌐</span><span class="nm">Site — Journal</span><span class="sw"></span></div>
+          <div class="dest" data-d="facebook"><span class="ic" style="background:var(--fb)">f</span><span class="nm">Facebook · 3 pages</span><span class="sw"></span></div>
+          <div class="dest" data-d="instagram"><span class="ic" style="background:var(--ig)">◎</span><span class="nm">Instagram</span><span class="sw"></span></div>
+          <div class="dest" data-d="linkedin"><span class="ic" style="background:var(--li)">in</span><span class="nm">LinkedIn</span><span class="sw"></span></div>
+        </div>
+        <div class="note">✅ Le filigrane à votre logo et le pied de page (contacts &amp; liens) sont ajoutés automatiquement.</div>
+        <button id="publishBtn" class="btn btn-accent" style="width:100%;margin-top:18px;padding:15px" onclick="publish()">Publier partout →</button>
+      </div>
+
+      <div id="resultsCard" class="card hide">
+        <h2 class="section">Résultat</h2>
+        <div class="results" id="results"></div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+const TOKEN_KEY = 'optipub_token';
+let token = localStorage.getItem(TOKEN_KEY) || '';
+let categorie = 'intervention';
+let files = [];
+
+function show(id){ document.getElementById(id).classList.remove('hide'); }
+function hide(id){ document.getElementById(id).classList.add('hide'); }
+function msg(id, text, type){ document.getElementById(id).innerHTML = text ? '<div class="msg '+(type||'err')+'">'+text+'</div>' : ''; }
+
+function refreshAuthUI(){
+  if (token){ hide('loginCard'); show('studio'); show('logoutBtn'); }
+  else { show('loginCard'); hide('studio'); hide('logoutBtn'); document.getElementById('who').textContent=''; }
+}
+function logout(){ token=''; localStorage.removeItem(TOKEN_KEY); refreshAuthUI(); }
+
+async function login(){
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  msg('loginMsg','');
+  try{
+    const r = await fetch('/api/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email,password}) });
+    const j = await r.json();
+    if(!r.ok || !j.token) throw new Error(j.message || 'Connexion échouée');
+    token = j.token; localStorage.setItem(TOKEN_KEY, token);
+    document.getElementById('who').textContent = j.user ? j.user.email : '';
+    refreshAuthUI();
+  }catch(e){ msg('loginMsg', e.message); }
+}
+
+// Catégories
+document.getElementById('cats').addEventListener('click', (e)=>{
+  const el = e.target.closest('.cat'); if(!el) return;
+  document.querySelectorAll('#cats .cat').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); categorie = el.dataset.c;
+});
+
+// Destinations
+document.getElementById('dests').addEventListener('click', (e)=>{
+  const el = e.target.closest('.dest'); if(!el) return;
+  el.classList.toggle('on');
+});
+
+// Photos
+const fileInput = document.getElementById('fileInput');
+document.getElementById('drop').addEventListener('click', ()=> fileInput.click());
+fileInput.addEventListener('change', ()=>{
+  for(const f of fileInput.files) files.push(f);
+  fileInput.value=''; renderPreviews();
+});
+function renderPreviews(){
+  const c = document.getElementById('previews'); c.innerHTML='';
+  files.forEach((f,i)=>{
+    const div = document.createElement('div'); div.className='pv';
+    const img = document.createElement('img'); img.src = URL.createObjectURL(f); div.appendChild(img);
+    const b = document.createElement('button'); b.textContent='×'; b.onclick=()=>{ files.splice(i,1); renderPreviews(); }; div.appendChild(b);
+    c.appendChild(div);
+  });
+}
+
+async function publish(){
+  msg('formMsg','');
+  const titre = document.getElementById('titre').value.trim();
+  const contenu = document.getElementById('contenu').value.trim();
+  const videoUrl = document.getElementById('videoUrl').value.trim();
+  const service = document.getElementById('service').value;
+  const destinations = Array.from(document.querySelectorAll('#dests .dest.on')).map(d=>d.dataset.d);
+
+  if(!titre){ msg('formMsg','Le titre est requis.'); return; }
+  if(!destinations.length){ msg('formMsg','Choisissez au moins une destination.'); return; }
+  if(!files.length){ msg('formMsg','Ajoutez au moins une photo.'); return; }
+
+  const btn = document.getElementById('publishBtn');
+  btn.disabled = true; btn.textContent = 'Publication en cours…';
+  try{
+    // 1) upload des photos (avec filigrane auto)
+    const fd = new FormData();
+    files.forEach(f=> fd.append('files', f));
+    const up = await fetch('/api/uploads', { method:'POST', headers:{Authorization:'Bearer '+token}, body: fd });
+    const upj = await up.json();
+    if(!up.ok) throw new Error(upj.message || 'Upload des photos échoué');
+
+    // 2) publication
+    const body = { titre, contenu, categorie, service, videoUrl, media: upj.media, destinations };
+    const res = await fetch('/api/posts/actualite', { method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer '+token}, body: JSON.stringify(body) });
+    const j = await res.json();
+    if(res.status===401){ logout(); throw new Error('Session expirée, reconnectez-vous.'); }
+    renderResults(j.results || []);
+  }catch(e){ msg('formMsg', e.message); }
+  finally{ btn.disabled=false; btn.textContent='Publier partout →'; }
+}
+
+const LABELS = { journal:'Site — Journal', facebook:'Facebook', instagram:'Instagram', linkedin:'LinkedIn' };
+function renderResults(results){
+  show('resultsCard');
+  const c = document.getElementById('results'); c.innerHTML='';
+  results.forEach(r=>{
+    const ok = r.status==='published';
+    const div = document.createElement('div'); div.className='res '+(ok?'ok':'ko');
+    const url = r.publishedUrl ? '<small><a href="'+r.publishedUrl+'" target="_blank">'+r.publishedUrl+'</a></small>' : '';
+    const err = r.error ? '<small>'+r.error+'</small>' : '';
+    div.innerHTML = '<span class="st">'+(ok?'✅':'❌')+'</span><div class="txt"><b>'+(LABELS[r.platform]||r.platform)+'</b> — '+(ok?'publié':'échec')+url+err+'</div>';
+    c.appendChild(div);
+  });
+  document.getElementById('resultsCard').scrollIntoView({behavior:'smooth'});
+  if(results.some(r=>r.status==='published')){
+    // reset du formulaire (on garde la connexion)
+    document.getElementById('titre').value=''; document.getElementById('contenu').value=''; document.getElementById('videoUrl').value=''; document.getElementById('service').value='';
+    files=[]; renderPreviews();
+  }
+}
+
+refreshAuthUI();
+</script>
+</body>
+</html>

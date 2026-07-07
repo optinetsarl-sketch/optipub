@@ -1,0 +1,33 @@
+# ── OPTIPUB : app + base MongoDB (auto-hébergée) ──
+# Déploiement serveur :  docker compose up -d --build
+services:
+  optipub-mongo:
+    image: mongo:7
+    container_name: optipub-mongo
+    restart: unless-stopped
+    volumes:
+      - optipub_mongo_data:/data/db
+    networks:
+      - optipub-net
+
+  optipub:
+    build: .
+    container_name: optipub
+    restart: unless-stopped
+    ports:
+      - "5001:5000"          # le site public passe par le reverse proxy vers ce port
+    env_file:
+      - app/backend/.env.production
+    volumes:
+      - optipub_uploads:/app/backend/uploads
+    depends_on:
+      - optipub-mongo
+    networks:
+      - optipub-net
+
+volumes:
+  optipub_mongo_data:
+  optipub_uploads:
+
+networks:
+  optipub-net:
