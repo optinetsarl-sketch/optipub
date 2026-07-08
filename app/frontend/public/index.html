@@ -415,6 +415,16 @@ textarea.fi{resize:vertical;min-height:85px;}
               <option value="promo">🎁 Promotion</option>
               <option value="comm">🌍 Communauté</option>
             </select></div></div>
+        <div class="fg" style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:10px 12px;">
+          <label class="fl">🛒 Catégorie boutique (si publié sur le Site web)</label>
+          <select class="fi" id="c-site-cat">
+            <option value="">— Aucune —</option>
+            <option value="ordinateurs">💻 Ordinateurs</option>
+            <option value="telephones">📱 Téléphones</option>
+            <option value="reseau-wifi">📶 Réseau &amp; WiFi</option>
+            <option value="accessoires">🔌 Accessoires</option>
+          </select>
+        </div>
         <div class="fg"><label class="fl">Lien externe</label>
           <input class="fi" type="url" id="c-link" placeholder="https://optinet-sarlu.ginolux.com/" value="https://optinet-sarlu.ginolux.com/" oninput="updatePreview()"></div>
         <div class="fg">
@@ -449,16 +459,6 @@ textarea.fi{resize:vertical;min-height:85px;}
           <div class="pchip tt" data-p="tiktok" onclick="toggleP(this)">🎵 TikTok</div>
           <div class="pchip wa" data-p="whatsapp_status" onclick="toggleP(this)">💬 WA Status</div>
           <div class="pchip wb" data-p="whatsapp_channel" onclick="toggleP(this)">📢 WA Channel</div>
-        </div>
-        <div class="fg" style="margin-top:10px;">
-          <label class="fl">Catégorie boutique (si publié sur le Site web)</label>
-          <select class="fi" id="c-site-cat">
-            <option value="">— Aucune —</option>
-            <option value="ordinateurs">💻 Ordinateurs</option>
-            <option value="telephones">📱 Téléphones</option>
-            <option value="reseau-wifi">📶 Réseau &amp; WiFi</option>
-            <option value="accessoires">🔌 Accessoires</option>
-          </select>
         </div>
       </div>
 
@@ -890,7 +890,7 @@ async function publishStudio(){
   if(!destinations.length){ toast('Choisissez au moins une destination.','err'); return; }
   if(!stFiles.length){ toast('Ajoutez au moins une photo.','err'); return; }
   const btn=document.getElementById('st-pub'); btn.disabled=true; const old=btn.textContent; btn.textContent='Publication en cours…';
-  showLoading('Envoi des photos et publication…');
+  showPublishProgress(destinations);
   try{
     // 1) upload des photos (+ filigrane)
     const fd=new FormData(); stFiles.forEach(f=>fd.append('files',f));
@@ -900,15 +900,17 @@ async function publishStudio(){
     // 2) publication (site + réseaux)
     const d=await api('POST','/posts/actualite',{titre,contenu,categorie:stCat,service,videoUrl,media:upj.media,destinations});
     const results=d.results||[];
+    clearInterval(_pubProgressTimer); closeModal('pub-modal');
     stRenderResults(results);
     const okCount=results.filter(r=>r.status==='published').length;
     if(okCount) toast('✅ Publié sur '+okCount+' destination(s) !','ok');
     else toast('❌ Échec — voir le détail sous le bouton.','err');
   }catch(e){
+    clearInterval(_pubProgressTimer); closeModal('pub-modal');
     stMsg(e.message);
     toast(e.message||'Erreur lors de la publication','err');
   } finally{
-    btn.disabled=false; btn.textContent=old; hideLoading();
+    btn.disabled=false; btn.textContent=old;
   }
 }
 function stRenderResults(results){
@@ -1287,9 +1289,10 @@ function openPublishModal() {
 let _pubProgressTimer = null;
 // Affiche une barre de progression animée + la liste des réseaux pendant l'envoi
 function showPublishProgress(platforms) {
-  const icons={facebook:'📘',instagram:'📸',linkedin:'💼',website:'🌐',x:'𝕏',tiktok:'🎵',whatsapp_status:'💬',whatsapp_channel:'📢'};
+  const icons={facebook:'📘',instagram:'📸',linkedin:'💼',website:'🌐',journal:'🌐',x:'𝕏',tiktok:'🎵',whatsapp_status:'💬',whatsapp_channel:'📢'};
+  const labels={journal:'Site — Journal'};
   const rows = (platforms||[]).map(p=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-      <span>${icons[p]||'📱'}</span><b style="font-size:13px;text-transform:capitalize;">${p}</b>
+      <span>${icons[p]||'📱'}</span><b style="font-size:13px;text-transform:capitalize;">${labels[p]||p}</b>
       <span class="spin" style="margin-left:auto;"></span></div>`).join('');
   document.getElementById('pub-modal-platforms').innerHTML =
     '<div style="font-weight:800;margin-bottom:10px;font-size:14px;">🚀 Publication en cours…</div>'
