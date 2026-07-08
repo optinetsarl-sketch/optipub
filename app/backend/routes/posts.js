@@ -209,7 +209,7 @@ router.post('/', protect, [
 
   try {
     const {
-      title, content, shortContent, hashtags, category,
+      title, content, shortContent, hashtags, category, boutiqueCategorie,
       externalLink, targetPlatforms, status, scheduledAt, media
     } = req.body;
 
@@ -223,7 +223,7 @@ router.post('/', protect, [
     const post = await Post.create({
       userId: req.user._id,
       title, content, shortContent, hashtags: hashtags || [],
-      category, externalLink, targetPlatforms,
+      category, boutiqueCategorie, externalLink, targetPlatforms,
       media: Array.isArray(media) ? media : [],
       status: status || 'draft',
       scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
@@ -324,7 +324,7 @@ router.put('/:id', protect, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Impossible de modifier une publication déjà publiée' });
     }
 
-    const updatable = ['title', 'content', 'shortContent', 'hashtags', 'category',
+    const updatable = ['title', 'content', 'shortContent', 'hashtags', 'category', 'boutiqueCategorie',
                        'externalLink', 'targetPlatforms', 'status', 'scheduledAt', 'media'];
     updatable.forEach(field => { if (req.body[field] !== undefined) post[field] = req.body[field]; });
 
@@ -400,6 +400,7 @@ async function publishToAllPlatforms(post, userId) {
           titre: post.title,
           description: post.content,
           prix: website.extractPrix(post.content),
+          categorie: post.boutiqueCategorie || '',
         });
         result.status = 'published';
         result.publishedUrl = (process.env.WEBSITE_API_URL || '').replace(/\/$/, '') + '/galerie';

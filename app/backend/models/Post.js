@@ -24,6 +24,9 @@ const PostSchema = new mongoose.Schema({
     enum: ['offre', 'actu', 'emploi', 'event', 'tech', 'promo', 'comm'],
     default: 'actu'
   },
+  // Catégorie de la boutique (slug côté site : ordinateurs, telephones, reseau-wifi, accessoires...)
+  // Utilisée uniquement quand la destination "website" est sélectionnée.
+  boutiqueCategorie: { type: String, trim: true },
   media: [{
     url: { type: String },
     type: { type: String, enum: ['image', 'video'] },

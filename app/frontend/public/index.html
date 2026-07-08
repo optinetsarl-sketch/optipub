@@ -450,6 +450,16 @@ textarea.fi{resize:vertical;min-height:85px;}
           <div class="pchip wa" data-p="whatsapp_status" onclick="toggleP(this)">💬 WA Status</div>
           <div class="pchip wb" data-p="whatsapp_channel" onclick="toggleP(this)">📢 WA Channel</div>
         </div>
+        <div class="fg" style="margin-top:10px;">
+          <label class="fl">Catégorie boutique (si publié sur le Site web)</label>
+          <select class="fi" id="c-site-cat">
+            <option value="">— Aucune —</option>
+            <option value="ordinateurs">💻 Ordinateurs</option>
+            <option value="telephones">📱 Téléphones</option>
+            <option value="reseau-wifi">📶 Réseau &amp; WiFi</option>
+            <option value="accessoires">🔌 Accessoires</option>
+          </select>
+        </div>
       </div>
 
       <div class="card">
@@ -1206,6 +1216,7 @@ function getPostData(status='draft') {
     shortContent: document.getElementById('c-short').value,
     hashtags: [...selectedTags],
     category: document.getElementById('c-cat').value,
+    boutiqueCategorie: document.getElementById('c-site-cat').value,
     externalLink: document.getElementById('c-link').value,
     media: uploadedMedia,
     targetPlatforms: platforms,
