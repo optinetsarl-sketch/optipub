@@ -42,9 +42,18 @@ app.get('/api/health', (req, res) => {
 });
 
 // ── Servir le Frontend ───────────────────────────
+// index.html contient tout le JS/CSS inline (pas de hash de build) : on interdit
+// sa mise en cache pour qu'un déploiement soit visible immédiatement au rechargement.
 const frontendPath = path.join(__dirname, '../frontend/public');
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, {
+  setHeaders: (res, filePath) => {
+    if (path.basename(filePath) === 'index.html') {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    }
+  },
+}));
 app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
