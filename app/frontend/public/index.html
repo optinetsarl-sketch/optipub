@@ -740,6 +740,11 @@ textarea.fi{resize:vertical;min-height:85px;}
 <div id="toast-el" class="toast"></div>
 
 <script>
+// La fenêtre de publication est partagée entre Créer et Studio : elle est définie
+// à l'intérieur de #page-create dans le HTML, donc masquée (display:none) dès qu'on
+// quitte la page Créer. On la rattache au <body> pour qu'elle s'affiche partout.
+document.body.appendChild(document.getElementById('pub-modal'));
+
 const API = '/api';
 let TOKEN = localStorage.getItem('optipub_token');
 let USER = JSON.parse(localStorage.getItem('optipub_user') || 'null');
