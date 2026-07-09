@@ -601,12 +601,7 @@ textarea.fi{resize:vertical;min-height:85px;}
         <div class="st-dest" data-d="linkedin" onclick="stToggle(this)"><span class="st-ic" style="background:#0a66c2;">in</span><span>LinkedIn</span><span class="st-sw"></span></div>
       </div>
       <p style="font-size:12.5px;color:#64748b;margin:14px 0 0;">✅ Filigrane logo + pied de page (contacts &amp; liens) ajoutés automatiquement.</p>
-      <button id="st-pub" class="st-pub" onclick="publishStudio()">Publier partout →</button>
-    </div>
-
-    <div id="st-results-card" class="st-card" style="display:none;">
-      <h3 style="margin:0 0 12px;color:#0f2a43;font-size:16px;">Résultat</h3>
-      <div id="st-results"></div>
+      <button id="st-pub-btn" class="st-pub" onclick="stOpenPublishModal()">Publier partout →</button>
     </div>
   </div>
 </div>
@@ -879,17 +874,36 @@ function stRenderPreviews(){
 }
 function stMsg(t,type){ document.getElementById('st-msg').innerHTML = t ? '<div style="padding:10px 13px;border-radius:9px;margin-bottom:14px;font-size:13.5px;background:'+(type==='ok'?'#dcfce7;color:#166534':'#fee2e2;color:#991b1b')+';">'+t+'</div>' : ''; }
 const ST_LABELS={journal:'Site — Journal',facebook:'Facebook',instagram:'Instagram',linkedin:'LinkedIn'};
-async function publishStudio(){
+const ST_ICONS={journal:'🌐',facebook:'📘',instagram:'📸',linkedin:'💼'};
+
+// Étape 1 : mêmes vérifications + même fenêtre "Confirmer la Publication" que la page Créer
+function stOpenPublishModal(){
   stMsg('');
+  const titre=document.getElementById('st-titre').value.trim();
+  const destinations=Array.from(document.querySelectorAll('#page-studio .st-dest.st-dest-on')).map(d=>d.dataset.d);
+  if(!titre){ toast('Le titre est requis.','err'); return; }
+  if(!destinations.length){ toast('Choisissez au moins une destination.','err'); return; }
+  if(!stFiles.length){ toast('Ajoutez au moins une photo.','err'); return; }
+  document.getElementById('pub-modal-platforms').innerHTML = destinations.map(p=>
+    `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span>${ST_ICONS[p]||'📱'}</span>
+      <span style="font-size:13px;font-weight:700;">${ST_LABELS[p]||p}</span>
+      <span class="bdg b-pub" style="margin-left:auto;">OK</span>
+    </div>`).join('');
+  const btn=document.getElementById('pub-confirm-btn');
+  btn.innerHTML='✅ Publier maintenant'; btn.disabled=false; btn.setAttribute('onclick','stDoPublish()');
+  document.getElementById('pub-modal').classList.add('open');
+}
+
+// Étape 2 : progression puis résultats, dans la même fenêtre partagée que Créer
+async function stDoPublish(){
+  const btn=document.getElementById('pub-confirm-btn');
   const titre=document.getElementById('st-titre').value.trim();
   const contenu=document.getElementById('st-contenu').value.trim();
   const videoUrl=document.getElementById('st-video').value.trim();
   const service=document.getElementById('st-service').value;
   const destinations=Array.from(document.querySelectorAll('#page-studio .st-dest.st-dest-on')).map(d=>d.dataset.d);
-  if(!titre){ toast('Le titre est requis.','err'); return; }
-  if(!destinations.length){ toast('Choisissez au moins une destination.','err'); return; }
-  if(!stFiles.length){ toast('Ajoutez au moins une photo.','err'); return; }
-  const btn=document.getElementById('st-pub'); btn.disabled=true; const old=btn.textContent; btn.textContent='Publication en cours…';
+  btn.innerHTML='<span class="spin"></span>Publication...'; btn.disabled=true;
   showPublishProgress(destinations);
   try{
     // 1) upload des photos (+ filigrane)
@@ -900,35 +914,16 @@ async function publishStudio(){
     // 2) publication (site + réseaux)
     const d=await api('POST','/posts/actualite',{titre,contenu,categorie:stCat,service,videoUrl,media:upj.media,destinations});
     const results=d.results||[];
-    clearInterval(_pubProgressTimer); closeModal('pub-modal');
-    stRenderResults(results);
-    const okCount=results.filter(r=>r.status==='published').length;
-    if(okCount) toast('✅ Publié sur '+okCount+' destination(s) !','ok');
-    else toast('❌ Échec — voir le détail sous le bouton.','err');
+    btn.innerHTML='✅ Publier maintenant'; btn.disabled=false;
+    showPublishResults(results);
+    if (results.some(r=>r.status==='published')) {
+      document.getElementById('st-titre').value=''; document.getElementById('st-contenu').value=''; document.getElementById('st-video').value=''; document.getElementById('st-service').value='';
+      stFiles=[]; stRenderPreviews();
+    }
   }catch(e){
-    clearInterval(_pubProgressTimer); closeModal('pub-modal');
-    stMsg(e.message);
-    toast(e.message||'Erreur lors de la publication','err');
-  } finally{
-    btn.disabled=false; btn.textContent=old;
-  }
-}
-function stRenderResults(results){
-  document.getElementById('st-results-card').style.display='block';
-  const c=document.getElementById('st-results'); c.innerHTML='';
-  results.forEach(r=>{
-    const ok=r.status==='published';
-    const div=document.createElement('div'); div.style.cssText='display:flex;gap:10px;align-items:center;padding:11px 13px;border-radius:10px;margin-bottom:9px;border:1px solid '+(ok?'#86efac':'#fca5a5')+';background:'+(ok?'#f0fdf4':'#fef2f2')+';';
-    const url=r.publishedUrl?'<br><small style="color:#64748b;word-break:break-all;"><a href="'+r.publishedUrl+'" target="_blank">'+r.publishedUrl+'</a></small>':'';
-    const err=r.error?'<br><small style="color:#64748b;">'+r.error+'</small>':'';
-    div.innerHTML='<span style="font-size:18px;">'+(ok?'✅':'❌')+'</span><div style="font-size:13.5px;color:#0f2a43;"><b>'+(ST_LABELS[r.platform]||r.platform)+'</b> — '+(ok?'publié':'échec')+url+err+'</div>';
-    c.appendChild(div);
-  });
-  document.getElementById('st-results-card').scrollIntoView({behavior:'smooth'});
-  if(results.some(r=>r.status==='published')){
-    document.getElementById('st-titre').value=''; document.getElementById('st-contenu').value=''; document.getElementById('st-video').value=''; document.getElementById('st-service').value='';
-    stFiles=[]; stRenderPreviews();
-    toast('Publication envoyée !','ok');
+    clearInterval(_pubProgressTimer);
+    btn.innerHTML='✅ Publier maintenant'; btn.disabled=false;
+    closeModal('pub-modal'); toast(e.message,'err');
   }
 }
 
@@ -1332,7 +1327,8 @@ async function doPublish() {
 // Affiche le résultat réel de la publication, réseau par réseau
 function showPublishResults(results) {
   clearInterval(_pubProgressTimer);
-  const icons={facebook:'📘',instagram:'📸',linkedin:'💼',website:'🌐',x:'𝕏',tiktok:'🎵',whatsapp_status:'💬',whatsapp_channel:'📢'};
+  const icons={facebook:'📘',instagram:'📸',linkedin:'💼',website:'🌐',journal:'🌐',x:'𝕏',tiktok:'🎵',whatsapp_status:'💬',whatsapp_channel:'📢'};
+  const labels={journal:'Site — Journal'};
   const rows = (results||[]).map(r=>{
     let badge='', extra='';
     if(r.status==='published'){
@@ -1340,9 +1336,9 @@ function showPublishResults(results) {
       if(r.publishedUrl){ const urls=String(r.publishedUrl).split(' | ').filter(Boolean);
         extra=urls.map((u,i)=>`<a href="${u}" target="_blank" style="color:var(--teal-d);font-weight:700;">Voir${urls.length>1?' '+(i+1):''}</a>`).join(' · '); }
     } else if(r.status==='skipped'){ badge='<span class="bdg" style="background:#eee;color:#888;">Ignoré</span>'; extra='<span style="color:#888;">non implémenté</span>'; }
-    else { badge='<span class="bdg" style="background:#fde2e2;color:#c0392b;">Échec</span>'; extra=`<span style="color:#c0392b;">${(r.errorMessage||'').substring(0,90)}</span>`; }
+    else { badge='<span class="bdg" style="background:#fde2e2;color:#c0392b;">Échec</span>'; extra=`<span style="color:#c0392b;">${(r.errorMessage||r.error||'').substring(0,90)}</span>`; }
     return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap;">
-      <span>${icons[r.platform]||'📱'}</span><b style="font-size:13px;text-transform:capitalize;">${r.platform}</b>
+      <span>${icons[r.platform]||'📱'}</span><b style="font-size:13px;text-transform:capitalize;">${labels[r.platform]||r.platform}</b>
       ${badge}<span style="margin-left:auto;font-size:11px;text-align:right;">${extra}</span></div>`;
   }).join('') || '<p>Aucun réseau ciblé.</p>';
   document.getElementById('pub-modal-platforms').innerHTML='<div style="font-weight:800;margin-bottom:12px;font-size:14px;">📊 Résultat par réseau</div>'+rows;
