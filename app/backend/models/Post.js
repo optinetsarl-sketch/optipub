@@ -36,7 +36,7 @@ const PostSchema = new mongoose.Schema({
   externalLink: { type: String },
   targetPlatforms: [{
     type: String,
-    enum: ['facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'whatsapp_status', 'whatsapp_channel', 'website']
+    enum: ['facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'whatsapp_status', 'whatsapp_channel', 'website', 'journal']
   }],
   status: {
     type: String,

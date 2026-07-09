@@ -308,6 +308,37 @@ router.post('/actualite', protect, async (req, res) => {
     results.push(...socialResults);
 
     const someOk = results.some(r => r.status === 'published');
+    const allOk = results.every(r => r.status === 'published');
+
+    // Enregistre la publication dans l'Historique (comme la page Créer) :
+    // même si le téléphone perd la connexion avant la réponse, la trace
+    // complète (statut + liens + erreurs par réseau) reste consultable.
+    try {
+      await Post.create({
+        userId: req.user._id,
+        title: titre,
+        content: contenu || '(publication Studio)',
+        shortContent: (contenu || '').substring(0, 200),
+        hashtags: synth.hashtags,
+        category: 'actu',
+        externalLink: videoUrl || '',
+        media: synth.media,
+        targetPlatforms: dests,
+        status: allOk ? 'published' : someOk ? 'partial' : 'failed',
+        publishedAt: someOk ? new Date() : null,
+        platformResults: results.map(r => ({
+          platform: r.platform,
+          status: r.status,
+          publishedUrl: r.publishedUrl,
+          platformPostId: r.platformPostId,
+          errorMessage: r.error,
+          publishedAt: r.status === 'published' ? new Date() : null,
+        })),
+      });
+    } catch (e) {
+      console.error('⚠️ Publication Studio réussie mais non enregistrée dans l\'historique:', e.message);
+    }
+
     res.status(someOk ? 200 : 502).json({ success: someOk, results });
   } catch (err) {
     console.error('❌ ERREUR POST /posts/actualite:', (err && err.stack) || err);
