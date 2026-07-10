@@ -210,8 +210,13 @@ router.post('/', protect, [
   try {
     const {
       title, content, shortContent, hashtags, category, boutiqueCategorie,
+      prix, quantiteDisponible,
       externalLink, targetPlatforms, status, scheduledAt, media
     } = req.body;
+
+    // '' (champ vide) -> undefined, sinon nombre
+    const qte = (quantiteDisponible === '' || quantiteDisponible == null)
+      ? undefined : Math.max(0, Number(quantiteDisponible) || 0);
 
     // Construire les résultats par plateforme
     const platformResults = targetPlatforms.map(platform => ({
@@ -223,7 +228,8 @@ router.post('/', protect, [
     const post = await Post.create({
       userId: req.user._id,
       title, content, shortContent, hashtags: hashtags || [],
-      category, boutiqueCategorie, externalLink, targetPlatforms,
+      category, boutiqueCategorie, prix: prix || '', quantiteDisponible: qte,
+      externalLink, targetPlatforms,
       media: Array.isArray(media) ? media : [],
       status: status || 'draft',
       scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
@@ -356,6 +362,7 @@ router.put('/:id', protect, async (req, res) => {
     }
 
     const updatable = ['title', 'content', 'shortContent', 'hashtags', 'category', 'boutiqueCategorie',
+                       'prix', 'quantiteDisponible',
                        'externalLink', 'targetPlatforms', 'status', 'scheduledAt', 'media'];
     updatable.forEach(field => { if (req.body[field] !== undefined) post[field] = req.body[field]; });
 
@@ -430,7 +437,9 @@ async function publishToAllPlatforms(post, userId) {
           imageFilePaths: images.map(i => i.filePath),
           titre: post.title,
           description: post.content,
-          prix: website.extractPrix(post.content),
+          // priorité au prix saisi explicitement, sinon extraction depuis le texte
+          prix: post.prix || website.extractPrix(post.content),
+          quantite: post.quantiteDisponible,
           categorie: post.boutiqueCategorie || '',
         });
         result.status = 'published';

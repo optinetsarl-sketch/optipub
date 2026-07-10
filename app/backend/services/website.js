@@ -46,11 +46,12 @@ async function pushPhoto({ token, filePath, titre, description, prix }) {
 }
 
 // Crée UN produit boutique avec toutes ses photos. Renvoie { id, count }
-async function pushProduit({ token, imageFilePaths, nom, description, prix, caracteristiques, categorie }) {
+async function pushProduit({ token, imageFilePaths, nom, description, prix, quantite, caracteristiques, categorie }) {
   const form = new FormData();
   form.append('nom', nom || 'Produit OPTINET');
   if (description) form.append('description', description);
   if (prix) form.append('prix', prix);
+  if (quantite !== undefined && quantite !== null && quantite !== '') form.append('quantite_disponible', String(quantite));
   if (caracteristiques) form.append('caracteristiques', caracteristiques);
   if (categorie) form.append('categorie', categorie);
   form.append('est_actif', 'true');
@@ -70,12 +71,12 @@ async function pushProduit({ token, imageFilePaths, nom, description, prix, cara
 
 // Publie un ARTICLE = 1 produit boutique avec toutes ses photos.
 // Renvoie { count, ids }
-async function publishToSite({ imageFilePaths, titre, description, prix, caracteristiques, categorie }) {
+async function publishToSite({ imageFilePaths, titre, description, prix, quantite, caracteristiques, categorie }) {
   if (!isConfigured()) throw new Error('Site non configuré (.env WEBSITE_*)');
   if (!imageFilePaths || !imageFilePaths.length) throw new Error('Le site exige au moins une image');
   const token = await login();
   const r = await pushProduit({
-    token, imageFilePaths, nom: titre, description, prix, caracteristiques, categorie,
+    token, imageFilePaths, nom: titre, description, prix, quantite, caracteristiques, categorie,
   });
   return { count: r.count, ids: [r.id], produitId: r.id };
 }

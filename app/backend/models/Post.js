@@ -27,6 +27,9 @@ const PostSchema = new mongoose.Schema({
   // Catégorie de la boutique (slug côté site : ordinateurs, telephones, reseau-wifi, accessoires...)
   // Utilisée uniquement quand la destination "website" est sélectionnée.
   boutiqueCategorie: { type: String, trim: true },
+  // Prix et stock de l'article (facultatifs) — transmis à la boutique du site.
+  prix: { type: String, trim: true },
+  quantiteDisponible: { type: Number, min: 0 },
   media: [{
     url: { type: String },
     type: { type: String, enum: ['image', 'video'] },

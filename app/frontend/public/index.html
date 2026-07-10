@@ -424,6 +424,16 @@ textarea.fi{resize:vertical;min-height:85px;}
             <option value="reseau-wifi">📶 Réseau &amp; WiFi</option>
             <option value="accessoires">🔌 Accessoires</option>
           </select>
+          <div class="fr2" style="margin-top:8px;">
+            <div>
+              <label class="fl">💰 Prix (facultatif)</label>
+              <input class="fi" type="text" id="c-site-prix" placeholder="Ex : 150 000 FCFA">
+            </div>
+            <div>
+              <label class="fl">📦 Quantité disponible (facultatif)</label>
+              <input class="fi" type="number" min="0" id="c-site-qte" placeholder="Ex : 5">
+            </div>
+          </div>
         </div>
         <div class="fg"><label class="fl">Lien externe</label>
           <input class="fi" type="url" id="c-link" placeholder="https://optinet-sarlu.ginolux.com/" value="https://optinet-sarlu.ginolux.com/" oninput="updatePreview()"></div>
@@ -1219,6 +1229,8 @@ function getPostData(status='draft') {
     hashtags: [...selectedTags],
     category: document.getElementById('c-cat').value,
     boutiqueCategorie: document.getElementById('c-site-cat').value,
+    prix: document.getElementById('c-site-prix').value.trim(),
+    quantiteDisponible: document.getElementById('c-site-qte').value.trim(),
     externalLink: document.getElementById('c-link').value,
     media: uploadedMedia,
     targetPlatforms: platforms,
