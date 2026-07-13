@@ -25,6 +25,7 @@ app.use('/api/accounts', require('./routes/accounts'));
 app.use('/api/hashtags', require('./routes/hashtags'));
 app.use('/api/uploads',  require('./routes/uploads'));
 app.use('/api/oauth',    require('./routes/oauth'));
+app.use('/api/backup',   require('./routes/backup'));
 
 // ── Médias uploadés ──────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
