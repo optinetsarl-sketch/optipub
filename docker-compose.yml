@@ -11,7 +11,7 @@ services:
       - app/backend/.env.production
     volumes:
       - optipub_uploads:/app/backend/uploads
-      - /home/hugue/backups:/backups:ro   # sauvegardes hebdo (téléchargées par le PC via /api/backup)
+      - /home/hugue/backups:/backups      # sauvegardes hebdo (téléchargées puis supprimées par le PC via /api/backup)
 
 volumes:
   optipub_uploads:

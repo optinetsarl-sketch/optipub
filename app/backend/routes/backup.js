@@ -51,4 +51,23 @@ router.get('/download/:name', verifToken, (req, res) => {
   res.download(filePath, name);
 });
 
+// DELETE /api/backup/:name — le PC supprime le fichier du serveur
+// UNIQUEMENT après avoir vérifié son téléchargement complet (taille identique).
+router.delete('/:name', verifToken, (req, res) => {
+  const name = String(req.params.name || '');
+  if (!/^[\w.-]+\.(gz|zip)$/.test(name) || name.includes('..')) {
+    return res.status(400).json({ success: false, message: 'Nom de fichier invalide' });
+  }
+  const filePath = path.join(BACKUP_DIR, name);
+  if (!filePath.startsWith(BACKUP_DIR) || !fs.existsSync(filePath)) {
+    return res.status(404).json({ success: false, message: 'Fichier introuvable' });
+  }
+  try {
+    fs.unlinkSync(filePath);
+    res.json({ success: true, message: `${name} supprimé du serveur` });
+  } catch (e) {
+    res.status(500).json({ success: false, message: e.message });
+  }
+});
+
 module.exports = router;
