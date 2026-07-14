@@ -7,9 +7,9 @@
 #  Produit dans /home/hugue/backups :
 #    - site-postgres_AAAA-MM-JJ.sql.gz   (base du site)
 #    - site-medias_AAAA-MM-JJ.tar.gz     (photos du site)
-#  Garde les 4 dernières copies de chaque.
-#  Le PC de bureau les télécharge ensuite via OPTIPUB
-#  (route /api/backup protégée par BACKUP_TOKEN).
+#  Le PC de bureau les télécharge via OPTIPUB (/api/backup,
+#  jeton BACKUP_TOKEN) puis les SUPPRIME du serveur.
+#  Ici on ne garde jamais plus d'une copie de chaque type.
 # ============================================================
 set -uo pipefail
 
@@ -45,9 +45,11 @@ else
   echo "$(date) : ⚠️ dossier médias introuvable ($MEDIA)" >> "$LOG"
 fi
 
-# ── 3) Rotation : garder les 4 plus récents de chaque type ──
+# ── 3) Rotation : ne garder QUE le plus récent de chaque type ──
+# (le serveur n'est qu'une zone de transit : le PC télécharge puis supprime ;
+#  s'il rate un vendredi, seule la copie la plus fraîche attend ici)
 for prefixe in site-postgres site-medias; do
-  ls -1t "$DEST/${prefixe}"_*.gz 2>/dev/null | tail -n +5 | xargs -r rm -f
+  ls -1t "$DEST/${prefixe}"_*.gz 2>/dev/null | tail -n +2 | xargs -r rm -f
 done
 
 echo "$(date) : sauvegarde terminée" >> "$LOG"
