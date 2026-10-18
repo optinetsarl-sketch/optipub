@@ -1,9 +1,67 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const SocialAccount = require('../models/SocialAccount');
 const User = require('../models/User');
+const { protect } = require('../middleware/auth');
 const linkedin = require('../services/linkedin');
+const youtube = require('../services/youtube');
 
 const router = express.Router();
+
+// GET /api/oauth/youtube/start — démarre le flux OAuth Google/YouTube
+router.get('/youtube/start', protect, (req, res) => {
+  if (!youtube.isConfigured()) {
+    return res.status(500).send('<h2>Configuration manquante</h2><p>Ajoutez GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET et GOOGLE_REDIRECT_URI dans le .env local.</p>');
+  }
+  const state = jwt.sign(
+    { userId: String(req.user._id), platform: 'youtube' },
+    process.env.JWT_SECRET,
+    { expiresIn: '10m' }
+  );
+  res.redirect(youtube.authUrl(state));
+});
+
+// GET /api/oauth/youtube/callback — Google renvoie ici avec ?code=...
+router.get('/youtube/callback', async (req, res) => {
+  const page = (title, body) => `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title></head><body style="font-family:system-ui,sans-serif;text-align:center;padding:48px;color:#ff0000">${body}</body></html>`;
+  try {
+    const { code, error, error_description, state } = req.query;
+    if (error) return res.send(page('Erreur YouTube', `<h2>Erreur Google</h2><p>${error} — ${error_description || ''}</p>`));
+    if (!code) return res.send(page('Erreur', '<h2>Code manquant</h2>'));
+
+    const oauthState = jwt.verify(String(state || ''), process.env.JWT_SECRET);
+    if (oauthState.platform !== 'youtube' || !oauthState.userId) {
+      throw new Error('État OAuth YouTube invalide ou expiré. Relancez la connexion.');
+    }
+    const user = await User.findById(oauthState.userId);
+    if (!user) throw new Error('Utilisateur OPTIPUB introuvable. Relancez la connexion.');
+
+    const tokens = await youtube.exchangeCode(code);
+    const profile = await youtube.getUserInfo(tokens.access_token);
+
+    let acc = await SocialAccount.findOne({ platform: 'youtube', userId: user?._id });
+    if (!acc) acc = new SocialAccount({ userId: user._id, platform: 'youtube' });
+    acc.userId = user._id;
+    acc.accountName = profile.name || 'YouTube';
+    acc.accountId = profile.id || null;
+    acc.accessToken = tokens.access_token;
+    acc.refreshToken = tokens.refresh_token || acc.refreshToken;
+    acc.status = 'connected';
+    acc.tokenExpiresAt = tokens.expiry_date ? new Date(tokens.expiry_date) : null;
+    acc.metadata = {
+      channel: profile.email || null,
+      tokenType: 'oauth',
+      connectedAt: new Date().toISOString(),
+      refreshToken: tokens.refresh_token || null,
+    };
+    acc.markModified('metadata');
+    await acc.save();
+
+    res.send(page('YouTube connecté', `<h1>✅ YouTube connecté !</h1><p>Compte : <b>${profile.name || 'Google'}</b></p><p>Tu peux fermer cet onglet et revenir sur OPTIPUB.</p>`));
+  } catch (e) {
+    res.status(500).send(page('Erreur', `<h2>Erreur</h2><p>${e.message}</p>`));
+  }
+});
 
 // GET /api/oauth/linkedin/start — démarre le flux (redirige vers LinkedIn)
 router.get('/linkedin/start', (req, res) => {

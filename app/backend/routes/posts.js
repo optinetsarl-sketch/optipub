@@ -10,6 +10,7 @@ const igService = require('../services/instagram');
 const liService = require('../services/linkedin');
 const website = require('../services/website');
 const cloudinary = require('../services/cloudinary');
+const youtube = require('../services/youtube');
 
 const router = express.Router();
 
@@ -21,6 +22,13 @@ function getPostImages(post) {
     .filter(m => m.type === 'image' && m.filename)
     .map(m => ({ filePath: path.join(uploadDir, m.filename) }))
     .filter(img => fs.existsSync(img.filePath));
+}
+
+function getPostVideos(post) {
+  return (post.media || [])
+    .filter(m => m.type === 'video' && m.filename)
+    .map(m => ({ filePath: path.join(uploadDir, m.filename) }))
+    .filter(video => fs.existsSync(video.filePath));
 }
 
 // Publie le contenu sur UNE page (texte, 1 photo, ou album)
@@ -84,6 +92,26 @@ async function publishInstagram(post, account) {
   return await igService.publish({ igUserId, token, imageUrls, caption });
 }
 
+// Publication réelle vers YouTube
+async function publishYoutube(post, account) {
+  const videoFiles = getPostVideos(post);
+  if (!videoFiles.length) throw new Error('YouTube exige au moins une vidéo');
+
+  const token = account.accessToken;
+  if (!token) throw new Error('Token YouTube manquant');
+  const refreshToken = account.metadata && account.metadata.refreshToken ? account.metadata.refreshToken : account.refreshToken;
+
+  return await youtube.publish({
+    token,
+    refreshToken,
+    title: post.title,
+    description: adaptContent(post, 'youtube'),
+    filePath: videoFiles[0].filePath,
+    tags: post.hashtags || [],
+    privacy: 'private',
+  });
+}
+
 // Publication réelle vers LinkedIn (texte + images, upload binaire direct)
 async function publishLinkedIn(post, account) {
   const text = adaptContent(post, 'linkedin');
@@ -135,6 +163,8 @@ const adaptContent = (post, platform) => {
       return `${title}\n\n${content}${contact}\n\n${tags}`;
     case 'linkedin':
       return `${title}\n\n${content}${link}${contact}\n\n✅ OPTINET SARLU — Solutions Tech, Togo\n\n${tags}`;
+    case 'youtube':
+      return `${title}\n\n${content}${link}\n\n${contact}\n\n${tags}`;
     case 'x':
       const maxX = 240;
       const textX = `${title} — ${post.shortContent || content}`.substring(0, maxX);
@@ -288,7 +318,7 @@ router.post('/actualite', protect, async (req, res) => {
     }
 
     // ── Réseaux sociaux (en parallèle) ──
-    const socialDests = dests.filter(d => ['facebook', 'instagram', 'linkedin'].includes(d));
+    const socialDests = dests.filter(d => ['facebook', 'instagram', 'linkedin', 'youtube'].includes(d));
     const socialResults = await Promise.all(socialDests.map(async (platform) => {
       const r = { platform, status: 'failed', error: null };
       try {
@@ -306,6 +336,9 @@ router.post('/actualite', protect, async (req, res) => {
           r.status = 'published'; r.publishedUrl = published.permalink;
         } else if (platform === 'linkedin') {
           const published = await publishLinkedIn(synth, account);
+          r.status = 'published'; r.publishedUrl = published.permalink;
+        } else if (platform === 'youtube') {
+          const published = await publishYoutube(synth, account);
           r.status = 'published'; r.publishedUrl = published.permalink;
         }
       } catch (e) { r.error = e.message; }
@@ -485,6 +518,17 @@ async function publishToAllPlatforms(post, userId) {
       // ── Intégration RÉELLE LinkedIn ──
       try {
         const published = await publishLinkedIn(post, account);
+        result.status = 'published';
+        result.publishedUrl = published.permalink;
+        result.platformPostId = published.id;
+        result.publishedAt = new Date();
+      } catch (e) {
+        result.status = 'failed';
+        result.error = e.message;
+      }
+    } else if (platform === 'youtube') {
+      try {
+        const published = await publishYoutube(post, account);
         result.status = 'published';
         result.publishedUrl = published.permalink;
         result.platformPostId = published.id;

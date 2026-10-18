@@ -6,7 +6,7 @@ const SocialAccountSchema = new mongoose.Schema({
   },
   platform: {
     type: String,
-    enum: ['facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'whatsapp_status', 'whatsapp_channel'],
+    enum: ['facebook', 'instagram', 'linkedin', 'youtube', 'x', 'tiktok', 'whatsapp_status', 'whatsapp_channel'],
     required: true
   },
   accountName: { type: String, required: true },

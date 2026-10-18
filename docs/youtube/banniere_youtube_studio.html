@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bannières YouTube Officielles — OPTINET SARLU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070c18;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --border-card: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #00e5ff;
+      --accent-blue: #2563eb;
+      --accent-red: #ff0033;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 20% 10%, #0c1a38 0%, #070c18 60%, #030712 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+      background: #0d1e3d;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.2rem;
+    }
+
+    .yt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 0, 0, 0.15);
+      border: 1px solid rgba(255, 0, 51, 0.35);
+      color: #ff4d4d;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .grid-banners {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .banner-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .banner-card:hover {
+      border-color: rgba(0, 229, 255, 0.5);
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 1rem;
+    }
+
+    .card-title-group h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pill-recommended {
+      background: linear-gradient(135deg, #00e5ff, #0284c7);
+      color: #031024;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+    }
+
+    .card-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .preview-container {
+      position: relative;
+      background: #020617;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .preview-img {
+      width: 100%;
+      height: auto;
+      max-height: 480px;
+      object-fit: contain;
+      border-radius: 10px;
+      display: block;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .guide-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%;
+      height: 30%;
+      border: 2px dashed rgba(0, 229, 255, 0.7);
+      border-radius: 6px;
+      pointer-events: none;
+      display: none;
+      background: rgba(0, 229, 255, 0.05);
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+    }
+
+    .guide-overlay.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .guide-text {
+      background: rgba(0, 0, 0, 0.8);
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid var(--accent-cyan);
+    }
+
+    .card-footer {
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00e5ff 0%, #0077ff 100%);
+      color: #020c1e;
+      box-shadow: 0 4px 16px rgba(0, 229, 255, 0.35);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(0, 229, 255, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.07);
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 229, 255, 0.4);
+    }
+
+    .btn-outline:hover {
+      background: rgba(0, 229, 255, 0.1);
+    }
+
+    .spec-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 1.75rem;
+      margin-bottom: 3rem;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .spec-item {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 1.1rem;
+      border-radius: 12px;
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    .spec-item h4 {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .spec-item p {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .avatar-section {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2rem;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(37, 99, 235, 0.05));
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px;
+      padding: 1.75rem;
+      margin-bottom: 3rem;
+    }
+
+    .avatar-img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--accent-cyan);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+      object-fit: cover;
+    }
+
+    .avatar-info {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .steps-list {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+    }
+
+    .step-number {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-cyan);
+      color: #030a16;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-card h4 {
+      font-size: 1rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .step-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0284c7;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      font-weight: 600;
+      display: none;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand-wrap">
+        <img src="logo-Optinet-sokode.png" alt="Logo Optinet" class="brand-logo" onerror="this.src='photo_profil_youtube_optinet.jpg'">
+        <div>
+          <h1>Bannières YouTube — OPTINET SARLU</h1>
+          <p class="tagline">Fichiers officiels haute résolution prêts à être téléversés sur YouTube Studio</p>
+        </div>
+      </div>
+      <div class="yt-badge">
+        <span>▶</span>
+        <span>Format Officiel YouTube 2560 × 1440</span>
+      </div>
+    </header>
+
+    <!-- BANNIÈRE 1 (RECOMMANDÉE AVEC SAFE ZONE YOUTUBE) -->
+    <div class="grid-banners">
+      <div class="banner-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2>Option 1 : Bannière Centrée & Badges High-Tech <span class="pill-recommended">Recommandée ⭐</span></h2>
+            <p class="card-meta">Format : 2560 × 1440 px | Optimisée Mobile, Tablette, Desktop & TV</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-outline" onclick="toggleOverlay('overlay1')">👁️ Afficher Zone Mobile/Safe-Area</button>
+            <a href="banniere_youtube_recommandee.jpg" download="Banniere_YouTube_Optinet_Recommandee.jpg" class="btn btn-primary">
+              📥 Télécharger cette bannière (JPG HD)
+            </a>
+          </div>
+        </div>
+        <div class="preview-container">
+          <img src="banniere_youtube_recommandee.jpg" alt="Bannière YouTube Optinet Recommandée" class="preview-img" id="img-banner-1">
+          <div class="guide-overlay" id="overlay1">
+            <div class="guide-text">Zone Visible sur Tous Écrans (1546 × 423 px)</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:0.85rem; color: var(--text-muted);">
+            ✨ Contenu parfaitement visible sur smartphones, tablettes et ordinateurs sans rognage du texte ou du logo.
+          </span>
+          <div class="btn-group">
+            <a href="banniere_youtube_recommandee.jpg" target="_blank" class="btn btn-secondary">🔍 Voir en taille réelle</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- BANNIÈRE 2 (VERSION LARGE BRANDING) -->
+      <div class="banner-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2>Option 2 : Bannière Dynamique avec Effet Néon & Carte Togo</h2>
+            <p class="card-meta">Format : 2560 × 1440 px | Style Carte de visite numérique haut de gamme</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-outline" onclick="toggleOverlay('overlay2')">👁️ Afficher Zone Mobile/Safe-Area</button>
+            <a href="banniere_youtube_optinet.jpg" download="Banniere_YouTube_Optinet_Style2.jpg" class="btn btn-primary">
+              📥 Télécharger Option 2 (JPG HD)
+            </a>
+          </div>
+        </div>
+        <div class="preview-container">
+          <img src="banniere_youtube_optinet.jpg" alt="Bannière YouTube Optinet Option 2" class="preview-img" id="img-banner-2">
+          <div class="guide-overlay" id="overlay2">
+            <div class="guide-text">Zone Visible sur Tous Écrans (1546 × 423 px)</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:0.85rem; color: var(--text-muted);">
+            🌐 Idéal pour un profil moderne mettant en avant l'ancrage régional Togo & Afrique de l'Ouest.
+          </span>
+          <div class="btn-group">
+            <a href="banniere_youtube_optinet.jpg" target="_blank" class="btn btn-secondary">🔍 Voir en taille réelle</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO DE PROFIL YOUTUBE -->
+    <div class="avatar-section">
+      <img src="photo_profil_youtube_optinet.jpg" alt="Photo de profil YouTube Optinet" class="avatar-img">
+      <div class="avatar-info">
+        <h3 style="font-size: 1.3rem; margin-bottom: 0.35rem;">Photo de Profil YouTube (Avatar)</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+          Format 800 × 800 px. Centrée avec logo officiel Optinet, dégradé turquoise/bleu et lisibilité maximale même à 32 × 32 px.
+        </p>
+        <a href="photo_profil_youtube_optinet.jpg" download="Photo_Profil_YouTube_Optinet.jpg" class="btn btn-primary">
+          📥 Télécharger la Photo de Profil (JPG)
+        </a>
+      </div>
+    </div>
+
+    <!-- GUIDE DIMENSIONS YOUTUBE -->
+    <div class="spec-box">
+      <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff;">📏 Règles & Dimensions Officielles YouTube</h3>
+      <div class="spec-grid">
+        <div class="spec-item">
+          <h4>Dimension Totale Recommandée</h4>
+          <p>2560 × 1440 px</p>
+        </div>
+        <div class="spec-item">
+          <h4>Zone de Sécurité (Mobile & Bureau)</h4>
+          <p>1546 × 423 px</p>
+        </div>
+        <div class="spec-item">
+          <h4>Photo de Profil (Avatar)</h4>
+          <p>800 × 800 px (Cercle)</p>
+        </div>
+        <div class="spec-item">
+          <h4>Taille maximale du fichier</h4>
+          <p>Moins de 6 Mo (JPG / PNG)</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">🚀 Comment mettre la bannière sur votre chaîne en 3 clics :</h3>
+        <div class="steps-list">
+          <div class="step-card">
+            <span class="step-number">1</span>
+            <h4>Ouvrir YouTube Studio</h4>
+            <p>Connectez-vous à <a href="https://studio.youtube.com" target="_blank" style="color: var(--accent-cyan); text-decoration: underline;">studio.youtube.com</a> avec le compte Google d'Optinet.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">2</span>
+            <h4>Aller dans Personnalisation</h4>
+            <p>Dans le menu de gauche, cliquez sur <strong>Personnalisation</strong>, puis sur l'onglet <strong>Image de marque</strong>.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">3</span>
+            <h4>Importer les 2 images</h4>
+            <p>Cliquez sur <strong>Importer</strong> pour la <em>Photo de profil</em> et la <em>Bannière</em>, puis cliquez sur <strong>Publier</strong> en haut à droite !</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Action effectuée avec succès !</div>
+
+  <script>
+    function toggleOverlay(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('active');
+        showToast(el.classList.contains('active') ? 'Zone Safe Area affichée' : 'Zone Safe Area masquée');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

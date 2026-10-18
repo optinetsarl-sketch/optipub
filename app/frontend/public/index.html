@@ -64,6 +64,31 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
   margin-bottom:22px;box-shadow:var(--sh);}
 .hero img{height:58px;border-radius:10px;background:#fff;padding:5px;}
 
+/* LANDING */
+.lp-page{background:#F4FBFF;}
+.lp-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#007B9A,#0D3A7A);color:#fff;padding:72px 24px 64px;}
+.lp-hero::before{content:'';position:absolute;right:-40px;top:-40px;width:320px;height:320px;background:radial-gradient(circle,#7DF0FF 0%,transparent 54%);opacity:.35;}
+.lp-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center;position:relative;z-index:1;}
+.lp-copy h1{font-size:3rem;line-height:1.03;margin-bottom:18px;max-width:630px;}
+.lp-copy p{font-size:1.05rem;line-height:1.8;max-width:620px;margin-bottom:26px;opacity:.92;}
+.lp-buttons{display:flex;flex-wrap:wrap;gap:14px;}
+.lp-buttons .btn{border-radius:999px;padding:14px 26px;font-size:14px;}
+.lp-buttons .btn-p{box-shadow:0 20px 40px rgba(0,184,217,.22);}
+.lp-visual{display:grid;gap:18px;}
+.lp-panel{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px);border-radius:24px;padding:28px;}
+.lp-panel h3{margin-bottom:12px;font-size:1.05rem;}
+.lp-panel p{line-height:1.75;opacity:.92;}
+.lp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px;}
+.lp-stat{background:#fff;border-radius:18px;padding:24px;box-shadow:var(--sh);}
+.lp-stat strong{display:block;font-size:28px;color:var(--blue-d);margin-bottom:8px;}
+.lp-features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:64px 0 16px;}
+.lp-feature{background:#fff;border-radius:18px;padding:24px;box-shadow:var(--sh);}
+.lp-feature h4{margin-bottom:10px;font-size:1.05rem;}
+.lp-feature p{line-height:1.7;opacity:.86;}
+.lp-cta{background:linear-gradient(135deg,#0D3A7A,#007B9A);color:#fff;border-radius:22px;padding:40px 30px;box-shadow:0 24px 60px rgba(0,0,0,.16);margin:40px 0;}
+.lp-cta h2{font-size:2rem;margin-bottom:16px;}
+.lp-cta p{opacity:.9;line-height:1.8;margin-bottom:22px;}
+
 /* CARDS */
 .card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:20px;margin-bottom:16px;}
 .card-hd{font-size:14px;font-weight:800;color:var(--teal-d);
@@ -258,7 +283,8 @@ textarea.fi{resize:vertical;min-height:85px;}
     </div>
   </div>
   <div class="nav-links">
-    <button class="nav-btn active" onclick="goto('dashboard',this)">📊 Dashboard</button>
+    <button class="nav-btn" onclick="goto('landing',this)">🏠 Accueil</button>
+    <button class="nav-btn" onclick="goto('dashboard',this)">📊 Dashboard</button>
     <button class="nav-btn" onclick="goto('create',this)">✏️ Créer</button>
     <button class="nav-btn" onclick="goto('studio',this)">📡 Studio</button>
     <button class="nav-btn" onclick="goto('history',this)">📋 Historique</button>
@@ -326,6 +352,50 @@ textarea.fi{resize:vertical;min-height:85px;}
       </div>
     </div>
   </div>
+</div>
+
+<!-- ═══ LANDING ═══ -->
+<div id="page-landing" class="page lp-page">
+  <section class="lp-hero">
+    <div class="lp-inner">
+      <div class="lp-copy">
+        <p style="text-transform:uppercase;letter-spacing:.24em;font-size:12px;opacity:.85;margin-bottom:18px;">OPTINET SARLU / OPTIPUB</p>
+        <h1>Une plateforme digitale qui unifie communication, publication et accompagnement client.</h1>
+        <p>Découvrez une expérience plus fluide pour piloter vos campagnes, gérer vos réseaux, et accélérer la transformation numérique de votre entreprise au Togo et en Afrique de l’Ouest.</p>
+        <div class="lp-buttons">
+          <button class="btn btn-p btn-lg" onclick="goto('auth')">Se connecter à OPTIPUB</button>
+          <button class="btn btn-o btn-lg" onclick="goto('dashboard')">Voir l’espace</button>
+        </div>
+      </div>
+      <div class="lp-visual">
+        <div class="lp-panel">
+          <h3>Gestion centralisée</h3>
+          <p>Planifiez, publiez et suivez toutes vos communications depuis un tableau de bord unique.</p>
+        </div>
+        <div class="lp-panel">
+          <h3>Contenu intelligent</h3>
+          <p>Générez, adaptez et programmez des publications pour Facebook, Instagram, LinkedIn, WhatsApp et plus encore.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="lp-stats">
+    <div class="lp-stat"><strong>+120</strong> campagnes lancées</div>
+    <div class="lp-stat"><strong>98%</strong> satisfaction client</div>
+    <div class="lp-stat"><strong>24/7</strong> support et supervision</div>
+  </section>
+  <section class="lp-features">
+    <div class="lp-feature"><h4>Publication multicanal</h4><p>Publiez sur les réseaux sociaux, messageries et sites web en un seul geste.</p></div>
+    <div class="lp-feature"><h4>Studio & journal</h4><p>Rédigez vos interventions terrain, enrichissez-les de visuels et diffusez sans perdre de temps.</p></div>
+    <div class="lp-feature"><h4>Analytics simple</h4><p>Suivez l’impact de vos communications avec des indicateurs clairs et actionnables.</p></div>
+  </section>
+  <section class="lp-cta">
+    <h2>Fusionnez l’efficacité d’OPTIPUB avec un design d’expérience internationale.</h2>
+    <p>Unifiez votre marque, gagnez en productivité et offrez à vos équipes une plateforme de publication et de service client complète.</p>
+    <div class="lp-buttons">
+      <button class="btn btn-p btn-lg" onclick="goto('auth')">Je veux tester OPTIPUB</button>
+    </div>
+  </section>
 </div>
 
 <!-- ═══ DASHBOARD ═══ -->
@@ -451,10 +521,10 @@ textarea.fi{resize:vertical;min-height:85px;}
         <div class="card-hd">🖼️ Médias</div>
         <div class="upload" onclick="document.getElementById('c-files').click()" style="cursor:pointer;">
           <div style="font-size:28px;margin-bottom:5px;">📁</div>
-          <p style="font-weight:700;font-size:13px;">Cliquez pour ajouter des photos</p>
-          <p style="font-size:11px;color:var(--teal-d);">PNG, JPG, WEBP · plusieurs photos possibles</p>
+          <p style="font-weight:700;font-size:13px;">Cliquez pour ajouter des photos ou vidéos</p>
+          <p style="font-size:11px;color:var(--teal-d);">PNG, JPG, WEBP, MP4, MOV, WEBM · plusieurs fichiers possibles</p>
         </div>
-        <input type="file" id="c-files" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="uploadMedias(this.files)">
+        <input type="file" id="c-files" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" multiple style="display:none" onchange="uploadMedias(this.files)">
         <div id="c-media-preview" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
       </div>
 
@@ -464,6 +534,7 @@ textarea.fi{resize:vertical;min-height:85px;}
           <div class="pchip fb on" data-p="facebook" onclick="toggleP(this)">📘 Facebook</div>
           <div class="pchip ig on" data-p="instagram" onclick="toggleP(this)">📸 Instagram</div>
           <div class="pchip li on" data-p="linkedin" onclick="toggleP(this)">💼 LinkedIn</div>
+          <div class="pchip yt" data-p="youtube" onclick="toggleP(this)">▶️ YouTube</div>
           <div class="pchip site on" data-p="website" onclick="toggleP(this)">🌐 Site web</div>
           <div class="pchip x" data-p="x" onclick="toggleP(this)">𝕏 X</div>
           <div class="pchip tt" data-p="tiktok" onclick="toggleP(this)">🎵 TikTok</div>
@@ -596,9 +667,9 @@ textarea.fi{resize:vertical;min-height:85px;}
       <label class="st-lbl">Lien vidéo YouTube (facultatif)</label>
       <input id="st-video" type="url" class="st-inp" placeholder="https://youtu.be/…">
 
-      <label class="st-lbl">Photos</label>
-      <div class="st-drop" onclick="document.getElementById('st-file').click()">📷 Cliquez pour ajouter des photos (la 1ʳᵉ sera la couverture)</div>
-      <input id="st-file" type="file" accept="image/*" multiple style="display:none;" onchange="stAddFiles()">
+      <label class="st-lbl">Photos et vidéos</label>
+      <div class="st-drop" onclick="document.getElementById('st-file').click()">📷 Cliquez pour ajouter des photos ou vidéos (la 1ʳᵉ sera la couverture)</div>
+      <input id="st-file" type="file" accept="image/*,video/*" multiple style="display:none;" onchange="stAddFiles()">
       <div id="st-previews" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"></div>
     </div>
 
@@ -609,6 +680,7 @@ textarea.fi{resize:vertical;min-height:85px;}
         <div class="st-dest" data-d="facebook" onclick="stToggle(this)"><span class="st-ic" style="background:#2a5fd0;">f</span><span>Facebook · 3 pages</span><span class="st-sw"></span></div>
         <div class="st-dest" data-d="instagram" onclick="stToggle(this)"><span class="st-ic" style="background:#c13584;">◎</span><span>Instagram</span><span class="st-sw"></span></div>
         <div class="st-dest" data-d="linkedin" onclick="stToggle(this)"><span class="st-ic" style="background:#0a66c2;">in</span><span>LinkedIn</span><span class="st-sw"></span></div>
+        <div class="st-dest" data-d="youtube" onclick="stToggle(this)"><span class="st-ic" style="background:#ff0000;">▶</span><span>YouTube</span><span class="st-sw"></span></div>
       </div>
       <p style="font-size:12.5px;color:#64748b;margin:14px 0 0;">✅ Filigrane logo + pied de page (contacts &amp; liens) ajoutés automatiquement.</p>
       <button id="st-pub-btn" class="st-pub" onclick="stOpenPublishModal()">Publier partout →</button>
@@ -725,23 +797,18 @@ textarea.fi{resize:vertical;min-height:85px;}
         <option value="facebook">📘 Facebook</option>
         <option value="instagram">📸 Instagram</option>
         <option value="linkedin">💼 LinkedIn</option>
+        <option value="youtube">▶️ YouTube</option>
         <option value="x">𝕏 X (Twitter)</option>
         <option value="tiktok">🎵 TikTok</option>
         <option value="whatsapp_status">💬 WhatsApp Status</option>
         <option value="whatsapp_channel">📢 WhatsApp Business Channel</option>
       </select></div>
-    <div class="fg"><label class="fl">Nom du compte / Page</label>
-      <input class="fi" type="text" id="conn-name" placeholder="Ex : Page OPTINET SARLU"></div>
-    <div class="fg"><label class="fl">Access Token (depuis l'API)</label>
-      <input class="fi" type="text" id="conn-token" placeholder="Votre access token OAuth..."></div>
-    <div class="fg"><label class="fl">Abonnés</label>
-      <input class="fi" type="number" id="conn-followers" placeholder="0"></div>
     <div style="background:var(--teal-l);border-radius:8px;padding:10px;font-size:11.5px;color:var(--teal-d);margin-bottom:14px;">
-      💡 Pour les plateformes OAuth (Facebook, LinkedIn, X, TikTok), utilisez le bouton OAuth ci-dessous pour obtenir votre token automatiquement.
+      🔐 Connexion sécurisée via OAuth uniquement. Aucun token manuel n’est demandé.
     </div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-o" style="flex:1;" onclick="closeModal('connect-modal')">Annuler</button>
-      <button class="btn btn-p" style="flex:1;" onclick="doConnectAccount()">✅ Connecter</button>
+      <button class="btn btn-p" style="flex:1;" onclick="startOAuthPlatform()">🔐 Connecter via OAuth</button>
     </div>
   </div>
 </div>
@@ -792,10 +859,12 @@ async function api(method, path, body=null) {
 
 // ── Navigation ────────────────────────────────────────────
 function goto(page, tab) {
+  if (!TOKEN && page !== 'landing' && page !== 'auth') { goto('auth'); return; }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   if (tab) tab.classList.add('active');
+  document.getElementById('main-nav').style.display = page === 'auth' ? 'none' : 'flex';
   if (page === 'dashboard') loadDashboard();
   if (page === 'history') loadHistory();
   if (page === 'accounts') loadAccounts();
@@ -882,14 +951,19 @@ function stRenderPreviews(){
   const c=document.getElementById('st-previews'); c.innerHTML='';
   stFiles.forEach((f,i)=>{
     const d=document.createElement('div'); d.style.cssText='position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;border:1px solid #d7e0ea;';
-    const img=document.createElement('img'); img.src=URL.createObjectURL(f); img.style.cssText='width:100%;height:100%;object-fit:cover;'; d.appendChild(img);
+    const media = /^video\//.test(f.type) ? document.createElement('video') : document.createElement('img');
+    const url = URL.createObjectURL(f);
+    media.src = url;
+    media.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+    if (media.tagName === 'VIDEO') { media.muted = true; media.playsInline = true; media.loop = true; media.autoplay = true; }
+    d.appendChild(media);
     const b=document.createElement('button'); b.type='button'; b.textContent='×'; b.style.cssText='position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:#ef4444;color:#fff;cursor:pointer;line-height:20px;padding:0;'; b.onclick=()=>{stFiles.splice(i,1);stRenderPreviews();}; d.appendChild(b);
     c.appendChild(d);
   });
 }
 function stMsg(t,type){ document.getElementById('st-msg').innerHTML = t ? '<div style="padding:10px 13px;border-radius:9px;margin-bottom:14px;font-size:13.5px;background:'+(type==='ok'?'#dcfce7;color:#166534':'#fee2e2;color:#991b1b')+';">'+t+'</div>' : ''; }
-const ST_LABELS={journal:'Site — Journal',facebook:'Facebook',instagram:'Instagram',linkedin:'LinkedIn'};
-const ST_ICONS={journal:'🌐',facebook:'📘',instagram:'📸',linkedin:'💼'};
+const ST_LABELS={journal:'Site — Journal',facebook:'Facebook',instagram:'Instagram',linkedin:'LinkedIn',youtube:'YouTube'};
+const ST_ICONS={journal:'🌐',facebook:'📘',instagram:'📸',linkedin:'💼',youtube:'▶️'};
 
 // Étape 1 : mêmes vérifications + même fenêtre "Confirmer la Publication" que la page Créer
 function stOpenPublishModal(){
@@ -1092,15 +1166,20 @@ function openConnectModal(platform='') {
   document.getElementById('connect-modal').classList.add('open');
 }
 
+async function startOAuthPlatform() {
+  const platform = document.getElementById('conn-platform').value;
+  try {
+    const d = await api('GET', '/accounts/oauth/' + platform);
+    if (!d.success || !d.authUrl) throw new Error(d.message || 'URL OAuth indisponible');
+    closeModal('connect-modal');
+    window.location.href = d.authUrl;
+  } catch (e) {
+    toast(e.message || 'Erreur OAuth', 'err');
+  }
+}
+
 async function doConnectAccount() {
-  const d = await api('POST','/accounts',{
-    platform: document.getElementById('conn-platform').value,
-    accountName: document.getElementById('conn-name').value,
-    accessToken: document.getElementById('conn-token').value,
-    followersCount: parseInt(document.getElementById('conn-followers').value)||0,
-  });
-  if (d.success) { toast('Compte connecté !','ok'); closeModal('connect-modal'); loadAccounts(); }
-  else toast(d.message,'err');
+  await startOAuthPlatform();
 }
 
 // ── Hashtags ───────────────────────────────────────────────
@@ -1242,7 +1321,7 @@ function getPostData(status='draft') {
 // ── Upload de photos ──────────────────────────────────────
 async function uploadMedias(files) {
   if (!files || !files.length) return;
-  showLoading('Envoi des photos...');
+  showLoading('Envoi des médias...');
   try {
     const form = new FormData();
     for (const f of files) form.append('files', f);
@@ -1252,7 +1331,7 @@ async function uploadMedias(files) {
     if (d.success && d.media) {
       uploadedMedia = uploadedMedia.concat(d.media);
       renderMediaPreview();
-      toast(d.media.length + ' photo(s) ajoutée(s) ✓','ok');
+      toast(d.media.length + ' média(s) ajouté(s) ✓','ok');
     } else { toast(d.message || 'Erreur upload','err'); }
   } catch(e){ hideLoading(); toast('Erreur upload: '+e.message,'err'); }
   const inp = document.getElementById('c-files'); if (inp) inp.value = '';
@@ -1261,11 +1340,15 @@ async function uploadMedias(files) {
 function renderMediaPreview() {
   const box = document.getElementById('c-media-preview');
   if (!box) return;
-  box.innerHTML = uploadedMedia.map((m,i)=>
-    `<div style="position:relative;width:66px;height:66px;">
-      <img src="${m.url}" style="width:66px;height:66px;object-fit:cover;border-radius:8px;border:1px solid #ddd;">
+  box.innerHTML = uploadedMedia.map((m,i)=> {
+    const isVideo = String(m.type || '').toLowerCase() === 'video';
+    return `<div style="position:relative;width:66px;height:66px;">
+      ${isVideo ?
+        `<video src="${m.url}" muted autoplay loop style="width:66px;height:66px;object-fit:cover;border-radius:8px;border:1px solid #ddd;background:#000;"></video>` :
+        `<img src="${m.url}" style="width:66px;height:66px;object-fit:cover;border-radius:8px;border:1px solid #ddd;">`}
       <div onclick="removeMedia(${i})" title="Retirer" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;background:#c0392b;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;line-height:1;">×</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function removeMedia(i) { uploadedMedia.splice(i,1); renderMediaPreview(); }
@@ -1434,7 +1517,7 @@ function statusBadge(s) {
 }
 
 function platIcons(platforms) {
-  const ic={facebook:'📘',instagram:'📸',linkedin:'💼',website:'🌐',journal:'🌐',x:'𝕏',tiktok:'🎵',whatsapp_status:'💬',whatsapp_channel:'📢'};
+  const ic={facebook:'📘',instagram:'📸',linkedin:'💼',youtube:'▶️',website:'🌐',journal:'🌐',x:'𝕏',tiktok:'🎵',whatsapp_status:'💬',whatsapp_channel:'📢'};
   return (platforms||[]).map(p=>ic[p]||'📱').join(' ');
 }
 
@@ -1446,7 +1529,7 @@ function fmtDate(d) {
 // ── Init ─────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   if (TOKEN && USER) initApp();
-  else document.getElementById('page-auth').classList.add('active');
+  else goto('landing');
   document.getElementById('dash-date').textContent = new Date().toLocaleDateString('fr-FR',
     {weekday:'long',day:'numeric',month:'long',year:'numeric'});
 });
