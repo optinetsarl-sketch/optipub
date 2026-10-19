@@ -37,19 +37,20 @@ router.get('/youtube/callback', async (req, res) => {
     if (!user) throw new Error('Utilisateur OPTIPUB introuvable. Relancez la connexion.');
 
     const tokens = await youtube.exchangeCode(code);
-    const profile = await youtube.getUserInfo(tokens.access_token);
+    const channel = await youtube.getChannelInfo(tokens.access_token);
 
     let acc = await SocialAccount.findOne({ platform: 'youtube', userId: user?._id });
     if (!acc) acc = new SocialAccount({ userId: user._id, platform: 'youtube' });
     acc.userId = user._id;
-    acc.accountName = profile.name || 'YouTube';
-    acc.accountId = profile.id || null;
+    acc.accountName = channel.title || 'YouTube';
+    acc.accountId = channel.id || null;
     acc.accessToken = tokens.access_token;
     acc.refreshToken = tokens.refresh_token || acc.refreshToken;
     acc.status = 'connected';
     acc.tokenExpiresAt = tokens.expiry_date ? new Date(tokens.expiry_date) : null;
     acc.metadata = {
-      channel: profile.email || null,
+      channel: channel.title || null,
+      channelId: channel.id || null,
       tokenType: 'oauth',
       connectedAt: new Date().toISOString(),
       refreshToken: tokens.refresh_token || null,
@@ -57,7 +58,7 @@ router.get('/youtube/callback', async (req, res) => {
     acc.markModified('metadata');
     await acc.save();
 
-    res.send(page('YouTube connecté', `<h1>✅ YouTube connecté !</h1><p>Compte : <b>${profile.name || 'Google'}</b></p><p>Tu peux fermer cet onglet et revenir sur OPTIPUB.</p>`));
+    res.send(page('YouTube connecté', `<h1>✅ YouTube connecté !</h1><p>Chaîne : <b>${channel.title || 'YouTube'}</b></p><p>Tu peux fermer cet onglet et revenir sur OPTIPUB.</p>`));
   } catch (e) {
     res.status(500).send(page('Erreur', `<h2>Erreur</h2><p>${e.message}</p>`));
   }

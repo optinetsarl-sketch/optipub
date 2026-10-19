@@ -46,6 +46,16 @@ async function getUserInfo(accessToken) {
   return data;
 }
 
+async function getChannelInfo(accessToken) {
+  const oauth = new google.auth.OAuth2();
+  oauth.setCredentials({ access_token: accessToken });
+  const youtube = google.youtube({ version: 'v3', auth: oauth });
+  const { data } = await youtube.channels.list({ part: ['id', 'snippet'], mine: true });
+  const channel = data.items && data.items[0];
+  if (!channel) throw new Error('Aucune chaîne YouTube accessible pour ce compte Google');
+  return { id: channel.id, title: channel.snippet && channel.snippet.title };
+}
+
 async function publish({ token, refreshToken, title, description, filePath, tags = [], privacy = 'private' }) {
   if (!isConfigured()) {
     throw new Error('Google YouTube OAuth non configuré (.env)');
@@ -87,4 +97,4 @@ async function publish({ token, refreshToken, title, description, filePath, tags
   };
 }
 
-module.exports = { isConfigured, authUrl, exchangeCode, getUserInfo, publish };
+module.exports = { isConfigured, authUrl, exchangeCode, getUserInfo, getChannelInfo, publish };
