@@ -21,7 +21,7 @@ const PostSchema = new mongoose.Schema({
   hashtags: [{ type: String }],
   category: {
     type: String,
-    enum: ['offre', 'actu', 'emploi', 'event', 'tech', 'promo', 'comm'],
+    enum: ['offre', 'actu', 'emploi', 'event', 'tech', 'promo', 'comm', 'noel'],
     default: 'actu'
   },
   // Catégorie de la boutique (slug côté site : ordinateurs, telephones, reseau-wifi, accessoires...)
@@ -39,7 +39,7 @@ const PostSchema = new mongoose.Schema({
   externalLink: { type: String },
   targetPlatforms: [{
     type: String,
-    enum: ['facebook', 'instagram', 'linkedin', 'x', 'tiktok', 'whatsapp_status', 'whatsapp_channel', 'website', 'journal']
+    enum: ['facebook', 'facebook_personal', 'instagram', 'linkedin', 'youtube', 'x', 'tiktok', 'whatsapp_status', 'whatsapp_channel', 'website', 'journal']
   }],
   status: {
     type: String,

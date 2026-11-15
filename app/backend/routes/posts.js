@@ -43,18 +43,21 @@ async function publishToOnePage(pageId, token, message, images) {
   }
 }
 
-// Publication réelle vers Facebook (une OU plusieurs Pages).
+// Publication réelle vers Facebook (une OU plusieurs Pages, ou profil personnel).
 // Les pages cibles sont dans account.metadata.pages = [{id, name}, ...]
 // (repli sur account.accountId si absent). Renvoie un tableau de résultats par page.
 async function publishFacebook(post, account) {
-  const message = adaptContent(post, 'facebook');
+  const isPersonal = account.platform === 'facebook_personal';
+  const message = adaptContent(post, isPersonal ? 'facebook_personal' : 'facebook');
   const images = getPostImages(post);
   const token = account.accessToken;
   if (!token) throw new Error('Token Facebook manquant');
 
-  const pages = (account.metadata && Array.isArray(account.metadata.pages) && account.metadata.pages.length)
-    ? account.metadata.pages
-    : [{ id: account.accountId, name: 'page' }];
+  const pages = isPersonal
+    ? [{ id: account.accountId || 'me', name: account.accountName || 'Profil Personnel' }]
+    : ((account.metadata && Array.isArray(account.metadata.pages) && account.metadata.pages.length)
+        ? account.metadata.pages
+        : [{ id: account.accountId, name: 'page' }]);
 
   const results = [];
   for (const pg of pages) {
@@ -158,6 +161,7 @@ const adaptContent = (post, platform) => {
 
   switch (platform) {
     case 'facebook':
+    case 'facebook_personal':
       return `🌐 ${title}\n\n${content}${link}${contact}\n\n${tags}`;
     case 'instagram':
       return `${title}\n\n${content}${contact}\n\n${tags}`;
@@ -318,13 +322,13 @@ router.post('/actualite', protect, async (req, res) => {
     }
 
     // ── Réseaux sociaux (en parallèle) ──
-    const socialDests = dests.filter(d => ['facebook', 'instagram', 'linkedin', 'youtube'].includes(d));
+    const socialDests = dests.filter(d => ['facebook', 'facebook_personal', 'instagram', 'linkedin', 'youtube'].includes(d));
     const socialResults = await Promise.all(socialDests.map(async (platform) => {
       const r = { platform, status: 'failed', error: null };
       try {
         const account = await SocialAccount.findOne({ userId: req.user._id, platform, status: 'connected' });
         if (!account) throw new Error(`Compte ${platform} non connecté`);
-        if (platform === 'facebook') {
+        if (platform === 'facebook' || platform === 'facebook_personal') {
           const pr = await publishFacebook(synth, account);
           const oks = pr.filter(x => !x.error);
           r.status = oks.length ? 'published' : 'failed';
@@ -487,8 +491,8 @@ async function publishToAllPlatforms(post, userId) {
 
     if (!account) {
       result.error = `Compte ${platform} non connecté`;
-    } else if (platform === 'facebook') {
-      // ── Intégration RÉELLE (une ou plusieurs Pages) ──
+    } else if (platform === 'facebook' || platform === 'facebook_personal') {
+      // ── Intégration RÉELLE (une ou plusieurs Pages, ou profil perso) ──
       try {
         const pageResults = await publishFacebook(post, account);
         const oks = pageResults.filter(r => !r.error);

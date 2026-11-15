@@ -8,6 +8,17 @@ const path = require('path');
 const GRAPH_VERSION = process.env.FACEBOOK_GRAPH_VERSION || 'v21.0';
 const GRAPH = `https://graph.facebook.com/${GRAPH_VERSION}`;
 
+function getOAuthUrl(state) {
+  const params = new URLSearchParams({
+    client_id: process.env.FACEBOOK_APP_ID || '',
+    redirect_uri: process.env.FACEBOOK_REDIRECT_URI || '',
+    response_type: 'code',
+    scope: 'pages_show_list,pages_manage_posts,pages_read_engagement,instagram_basic,instagram_content_publish',
+    state,
+  });
+  return `https://www.facebook.com/${GRAPH_VERSION}/dialog/oauth?${params}`;
+}
+
 // Erreur portant le message renvoyé par l'API Facebook
 class FacebookError extends Error {
   constructor(message, details) {
@@ -26,6 +37,33 @@ async function graphJson(url, options) {
     throw new FacebookError(msg, body.error || body);
   }
   return body;
+}
+
+async function exchangeOAuthCode(code) {
+  const params = new URLSearchParams({
+    client_id: process.env.FACEBOOK_APP_ID || '',
+    client_secret: process.env.FACEBOOK_APP_SECRET || '',
+    redirect_uri: process.env.FACEBOOK_REDIRECT_URI || '',
+    code,
+  });
+  return graphJson(`${GRAPH}/oauth/access_token?${params}`);
+}
+
+async function exchangeLongLivedToken(accessToken) {
+  const params = new URLSearchParams({
+    grant_type: 'fb_exchange_token',
+    client_id: process.env.FACEBOOK_APP_ID || '',
+    client_secret: process.env.FACEBOOK_APP_SECRET || '',
+    fb_exchange_token: accessToken,
+  });
+  return graphJson(`${GRAPH}/oauth/access_token?${params}`);
+}
+
+async function getManagedPages(accessToken) {
+  const fields = 'id,name,access_token,instagram_business_account{id,username}';
+  const params = new URLSearchParams({ fields, access_token: accessToken });
+  const body = await graphJson(`${GRAPH}/me/accounts?${params}`);
+  return body.data || [];
 }
 
 // Valide un token et renvoie l'identité { id, name }
@@ -139,6 +177,10 @@ async function publishMultiPhoto({ pageId, token, message, images }) {
 
 module.exports = {
   FacebookError,
+  getOAuthUrl,
+  exchangeOAuthCode,
+  exchangeLongLivedToken,
+  getManagedPages,
   validateToken,
   resolvePageToken,
   publishText,

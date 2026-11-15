@@ -70,6 +70,19 @@ async function publish({ token, refreshToken, title, description, filePath, tags
     refresh_token: refreshToken || undefined,
   });
 
+  // Le jeton d'accès Google expire après 1 h. L'envoi d'une vidéo se fait en flux :
+  // la bibliothèque ne peut pas le renvoyer après un refus 401. On renouvelle donc
+  // le jeton AVANT l'envoi, grâce au jeton de rafraîchissement.
+  if (refreshToken) {
+    try {
+      const { credentials } = await oauth.refreshAccessToken();
+      oauth.setCredentials({ ...credentials, refresh_token: credentials.refresh_token || refreshToken });
+    } catch (err) {
+      const reason = (err && err.response && err.response.data && err.response.data.error) || err.message;
+      throw new Error(`Connexion YouTube expirée (${reason}). Ouvrez Réseaux → YouTube → Renouveler, puis réessayez.`);
+    }
+  }
+
   const youtube = google.youtube({ version: 'v3', auth: oauth });
   const response = await youtube.videos.insert({
     part: ['snippet', 'status'],

@@ -47,6 +47,11 @@ const HASHTAG_LIBRARY = {
     tags: ['#TogoForward', '#FierDuTogo', '#TogoBusiness', '#CommunautéTogo',
            '#MadeInTogo', '#TogoInnovation', '#PrideTogo']
   },
+  noel: {
+    label: '🎄 Noël en Brousse & Fêtes',
+    tags: ['#NoelAuTogo', '#NoelEnBrousse', '#FetesDeFinDannee', '#OPTINET', '#SolidariteTogo',
+           '#Sokodé', '#Kara', '#Lomé', '#InternetPourTous', '#BonneAnnee2027', '#SolutionsTech']
+  },
 };
 
 // Formules prêtes par catégorie de publication
@@ -85,6 +90,11 @@ const READY_FORMULAS = {
     label: '🌍 Portée Max Afrique',
     description: 'Visibilité maximale sur toute l\'Afrique de l\'Ouest',
     tags: '#OPTINET #Togo #Africa #AfriqueDeLOuest #AfricaTech #NumériqueTogo #Digitalisation #TransitionNumérique #WestAfrica'
+  },
+  noel: {
+    label: '🎄 Noël en Brousse & Fêtes',
+    description: 'Campagne festive, solidarité et connectivité pour les fêtes de fin d\'année',
+    tags: '#OPTINET #NoelEnBrousse #NoelAuTogo #SolidariteTogo #Sokodé #Togo #FibreOptique #BonneAnnee2027 #SolutionsTech'
   },
 };
 
