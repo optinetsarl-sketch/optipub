@@ -86,9 +86,24 @@ router.put('/profile', protect, async (req, res) => {
 router.put('/password', protect, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Mot de passe actuel et nouveau mot de passe requis' });
+    }
     const user = await User.findById(req.user._id).select('+password');
     if (!(await user.matchPassword(currentPassword))) {
       return res.status(400).json({ success: false, message: 'Mot de passe actuel incorrect' });
+    }
+    if (newPassword.length < 10) {
+      return res.status(400).json({ success: false, message: 'Nouveau mot de passe : 10 caractères minimum' });
+    }
+    const local = (user.email || '').split('@')[0].toLowerCase();
+    const np = newPassword.toLowerCase();
+    const npCore = np.replace(/[^a-z0-9]/g, '');
+    if (local.length >= 4 && (np.includes(local) || (npCore.length >= 4 && local.includes(npCore)))) {
+      return res.status(400).json({ success: false, message: 'Le mot de passe ne doit pas ressembler à votre email' });
+    }
+    if (await user.matchPassword(newPassword)) {
+      return res.status(400).json({ success: false, message: 'Le nouveau mot de passe doit être différent de l\'actuel' });
     }
     user.password = newPassword;
     await user.save();

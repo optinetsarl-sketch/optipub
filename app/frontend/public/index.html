@@ -309,6 +309,7 @@ textarea.fi{resize:vertical;min-height:85px;}
     <button class="nav-btn" onclick="goto('history',this)">📋 Historique</button>
     <button class="nav-btn" onclick="goto('hashtags',this)">🏷️ Hashtags</button>
     <button class="nav-btn" onclick="goto('accounts',this)">🔗 Réseaux</button>
+    <button class="nav-btn" onclick="goto('profile',this)">👤 Mon compte</button>
   </div>
   <div class="nav-user" onclick="goto('profile',document.querySelector('.nav-btn'))">
     <div class="ava" id="nav-ava"><img src="/assets/logo-icon.png" alt="OPTINET" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
@@ -333,9 +334,9 @@ textarea.fi{resize:vertical;min-height:85px;}
       <div id="auth-login">
         <div class="auth-err" id="login-err"></div>
         <div class="fg"><label class="fl">Email</label>
-          <input class="fi" type="email" id="login-email" placeholder="optinetsarl@gmail.com" value="optinetsarl@gmail.com"></div>
+          <input class="fi" type="email" id="login-email" placeholder="votre@email.com" autocomplete="username"></div>
         <div class="fg"><label class="fl">Mot de passe</label>
-          <input class="fi" type="password" id="login-pw" placeholder="••••••••" value="optinet2026"></div>
+          <input class="fi" type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password"></div>
         <button class="btn btn-p btn-lg" style="width:100%;margin-top:6px;" id="login-btn" onclick="doLogin()">Se connecter</button>
         <div style="text-align:center;margin-top:12px;font-size:12px;">
           <a href="#" style="color:var(--teal-d);font-weight:700;" onclick="showAuth('register')">Créer un compte</a>
@@ -954,7 +955,9 @@ textarea.fi{resize:vertical;min-height:85px;}
     <div class="card">
       <div class="card-hd">Changer le mot de passe</div>
       <div class="fg"><label class="fl">Mot de passe actuel</label><input class="fi" type="password" id="p-pw-curr"></div>
-      <div class="fg"><label class="fl">Nouveau mot de passe</label><input class="fi" type="password" id="p-pw-new"></div>
+      <div class="fg"><label class="fl">Nouveau mot de passe</label><input class="fi" type="password" id="p-pw-new" autocomplete="new-password"></div>
+      <div class="fg"><label class="fl">Confirmer le nouveau mot de passe</label><input class="fi" type="password" id="p-pw-new2" autocomplete="new-password"></div>
+      <div style="font-size:11px;color:#64748b;margin:-4px 0 10px;">10 caractères minimum, différent de l'actuel et sans ressemblance avec votre email.</div>
       <button class="btn btn-s" onclick="changePassword()">Mettre à jour</button>
     </div>
   </div>
@@ -1781,11 +1784,14 @@ async function updateProfile() {
 }
 
 async function changePassword() {
+  const np = document.getElementById('p-pw-new').value;
+  if (np.length < 10) { toast('Nouveau mot de passe : 10 caractères minimum','err'); return; }
+  if (np !== document.getElementById('p-pw-new2').value) { toast('Les deux nouveaux mots de passe ne correspondent pas','err'); return; }
   const d = await api('PUT','/auth/password',{
     currentPassword: document.getElementById('p-pw-curr').value,
     newPassword: document.getElementById('p-pw-new').value,
   });
-  if (d.success) { toast('Mot de passe mis à jour ✓','ok'); ['p-pw-curr','p-pw-new'].forEach(id=>document.getElementById(id).value=''); }
+  if (d.success) { toast('Mot de passe mis à jour ✓','ok'); ['p-pw-curr','p-pw-new','p-pw-new2'].forEach(id=>document.getElementById(id).value=''); }
   else toast(d.message,'err');
 }
 
