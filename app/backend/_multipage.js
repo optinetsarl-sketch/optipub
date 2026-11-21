@@ -21,21 +21,21 @@ const images = [
 ].map(f => ({ filePath: DIR + f }));
 
 const caption = [
-  '🌐 Hp probook x360 440 G1 Core i5 — Écran 14" Full HD Ultra slim et très performant',
+  'Hp probook x360 440 G1 Core i5 — Écran 14" Full HD Ultra slim et très performant',
   '',
   '7th Generation',
   'Processeur Intel core i5',
   'CPU 2.50GHz ~2.71GHz',
   'SSD 256gb M2',
   'RAM 8gb DDR4',
-  'Bluetooth ✨ Type-C ✨ HDMI ✨ USB ✨',
-  'Batterie 🔋 excellente autonomie 4heures',
+  'Bluetooth · Type-C · HDMI · USB',
+  'Batterie excellente autonomie 4 heures',
   'Prix: 210 000 FCFA',
   '',
-  '📞 +228 90 74 84 65 | optinetsarl@gmail.com',
+  'Tél. : +228 90 74 84 65 | optinetsarl@gmail.com',
   '',
-  '📢 Rejoignez notre canal WhatsApp : https://whatsapp.com/channel/0029VbClEHFC1Fu7LWjyO11M',
-  '💬 Commandez sur WhatsApp : https://wa.me/22890748465',
+  'Rejoignez notre canal WhatsApp : https://whatsapp.com/channel/0029VbClEHFC1Fu7LWjyO11M',
+  'Commandez sur WhatsApp : https://wa.me/22890748465',
   '',
   '#OPTINET #HP #Probook #Ordinateur #Lome #Togo',
 ].join('\n');
@@ -50,16 +50,16 @@ const caption = [
     acc.metadata = { ...(acc.metadata || {}), pages: PAGES };
     acc.markModified('metadata');
     await acc.save();
-    console.log('3 pages enregistrees en base:', PAGES.map(p => p.name).join(', '), '✅');
+    console.log('3 pages enregistrees en base:', PAGES.map(p => p.name).join(', '), '[OK]');
 
     // 2) Publier sur les 2 pages manquantes
     for (const pageId of MISSING) {
       const name = PAGES.find(p => p.id === pageId).name;
       try {
         const r = await fb.publishMultiPhoto({ pageId, token, message: caption, images });
-        console.log(`\n[${name}] ✅ publie -> ${r.permalink}`);
+        console.log(`\n[${name}] [OK] publie -> ${r.permalink}`);
       } catch (e) {
-        console.log(`\n[${name}] ❌ ${e.message}`);
+        console.log(`\n[${name}] [ERREUR] ${e.message}`);
       }
     }
 

@@ -10,6 +10,10 @@ const youtube = require('../services/youtube');
 
 const router = express.Router();
 
+const SVG_OK = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px;margin-right:8px;"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>';
+const SVG_REFRESH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a7d2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px;"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>';
+const SVG_WARN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b26b00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>';
+
 function connectedPage(title, message, color = '#333') {
   const returnUrl = process.env.OPTIPUB_RETURN_URL || 'http://localhost:5000';
   const safeReturnUrl = returnUrl.replace(/[&<>\"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' })[character]);
@@ -53,7 +57,7 @@ router.get('/x/callback', async (req, res) => {
     account.markModified('metadata');
     await account.save();
 
-    res.send(connectedPage('X connecté', `<h1>✅ X connecté</h1><p>Compte : <b>${profile.name || profile.username || 'X'}</b></p><p>Retour vers OPTIPUB…</p>`, '#000'));
+    res.send(connectedPage('X connecté', `<h1>${SVG_OK}X connecté</h1><p>Compte : <b>${profile.name || profile.username || 'X'}</b></p><p>Retour vers OPTIPUB…</p>`, '#000'));
   } catch (error) {
     const message = error instanceof xOAuth.XOAuthError ? error.message : 'État OAuth invalide ou expiré. Relancez la connexion depuis OPTIPUB.';
     const safeMessage = String(message).slice(0, 240).replace(/[&<>\"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' })[character]);
@@ -85,7 +89,7 @@ router.get('/facebook/callback', async (req, res) => {
     let personalProfile = null;
     try {
       personalProfile = await facebook.validateToken(longToken.access_token);
-    } catch (_) {}
+    } catch (_) { }
 
     // Si demande explicite de connecter le profil personnel
     if (oauthState.platform === 'facebook_personal') {
@@ -110,7 +114,7 @@ router.get('/facebook/callback', async (req, res) => {
       );
       personalAccount.markModified('metadata');
       await personalAccount.save();
-      return res.send(connectedPage('Facebook Perso connecté', `<h1>✅ Profil Facebook connecté</h1><p>Compte : <b>${pName}</b></p><p>Retour vers OPTIPUB…</p>`, '#1877f2'));
+      return res.send(connectedPage('Facebook Perso connecté', `<h1>${SVG_OK}Profil Facebook connecté</h1><p>Compte : <b>${pName}</b></p><p>Retour vers OPTIPUB…</p>`, '#1877f2'));
     }
 
     if (!pages.length && oauthState.platform === 'facebook') {
@@ -163,7 +167,7 @@ router.get('/facebook/callback', async (req, res) => {
           );
           personalAccount.markModified('metadata');
           await personalAccount.save();
-        } catch (_) {}
+        } catch (_) { }
       }
     }
 
@@ -196,7 +200,7 @@ router.get('/facebook/callback', async (req, res) => {
     }
 
     const connected = oauthState.platform === 'facebook' ? 'Facebook' : 'Instagram';
-    res.send(connectedPage(`${connected} connecté`, `<h1>✅ ${connected} connecté</h1><p>Retour vers OPTIPUB…</p>`, '#1877f2'));
+    res.send(connectedPage(`${connected} connecté`, `<h1>${SVG_OK}${connected} connecté</h1><p>Retour vers OPTIPUB…</p>`, '#1877f2'));
   } catch (error) {
     const diagnostic = error instanceof facebook.FacebookError ? error.message : error.name || 'Erreur OAuth';
     const safeDiagnostic = String(diagnostic).slice(0, 240).replace(/[&<>\"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' })[character]);
@@ -255,7 +259,7 @@ router.get('/youtube/callback', async (req, res) => {
     acc.markModified('metadata');
     await acc.save();
 
-    res.send(connectedPage('YouTube connecté', `<h1>✅ YouTube connecté !</h1><p>Chaîne : <b>${channel.title || 'YouTube'}</b></p><p>Retour vers OPTIPUB…</p>`, '#ff0000'));
+    res.send(connectedPage('YouTube connecté', `<h1>${SVG_OK}YouTube connecté !</h1><p>Chaîne : <b>${channel.title || 'YouTube'}</b></p><p>Retour vers OPTIPUB…</p>`, '#ff0000'));
   } catch (e) {
     res.status(500).send(page('Erreur', `<h2>Erreur</h2><p>${e.message}</p>`));
   }
@@ -307,11 +311,11 @@ router.get('/linkedin/callback', async (req, res) => {
 
     const hasRefresh = Boolean(tok.refresh_token);
     res.send(connectedPage('LinkedIn connecté', `
-      <h1>✅ LinkedIn connecté !</h1>
+      <h1>${SVG_OK}LinkedIn connecté !</h1>
       <p>Compte : <b>${info.name || ''}</b></p>
       <p style="color:${hasRefresh ? '#0a7d2c' : '#b26b00'}">${hasRefresh
-        ? '♻️ Refresh token reçu : renouvellement automatique activé (aucun reclic pendant ~1 an).'
-        : '⚠️ Pas de refresh token fourni par LinkedIn : reconnexion manuelle tous les ~2 mois.'}</p>
+        ? `${SVG_REFRESH}Refresh token reçu : renouvellement automatique activé (aucun reclic pendant ~1 an).`
+        : `${SVG_WARN}Pas de refresh token fourni par LinkedIn : reconnexion manuelle tous les ~2 mois.`}</p>
       <p>Retour vers OPTIPUB…</p>`, '#0a66c2'));
   } catch (e) {
     res.status(500).send(page('Erreur', `<h2>Erreur</h2><p>${e.message}</p>`));

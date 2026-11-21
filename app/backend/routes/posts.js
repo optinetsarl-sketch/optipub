@@ -154,19 +154,19 @@ const adaptContent = (post, platform) => {
   const title = post.title;
   const content = post.content;
   const tags = post.hashtags.map(t => t.startsWith('#') ? t : '#' + t).join(' ');
-  const link = post.externalLink ? `\n\n🔗 ${post.externalLink}` : '';
-  const contact = '\n\n📞 +228 90 74 84 65 | optinetsarl@gmail.com'
-    + '\n📢 Canal WhatsApp : https://whatsapp.com/channel/0029VbClEHFC1Fu7LWjyO11M'
-    + '\n💬 Commander sur WhatsApp : https://wa.me/22890748465';
+  const link = post.externalLink ? `\n\nLien : ${post.externalLink}` : '';
+  const contact = '\n\nTél. : +228 90 74 84 65 | optinetsarl@gmail.com'
+    + '\nCanal WhatsApp : https://whatsapp.com/channel/0029VbClEHFC1Fu7LWjyO11M'
+    + '\nCommander sur WhatsApp : https://wa.me/22890748465';
 
   switch (platform) {
     case 'facebook':
     case 'facebook_personal':
-      return `🌐 ${title}\n\n${content}${link}${contact}\n\n${tags}`;
+      return `${title}\n\n${content}${link}${contact}\n\n${tags}`;
     case 'instagram':
       return `${title}\n\n${content}${contact}\n\n${tags}`;
     case 'linkedin':
-      return `${title}\n\n${content}${link}${contact}\n\n✅ OPTINET SARLU — Solutions Tech, Togo\n\n${tags}`;
+      return `${title}\n\n${content}${link}${contact}\n\nOPTINET SARLU — Solutions Tech, Togo\n\n${tags}`;
     case 'youtube':
       return `${title}\n\n${content}${link}\n\n${contact}\n\n${tags}`;
     case 'x':
@@ -176,9 +176,9 @@ const adaptContent = (post, platform) => {
     case 'tiktok':
       return `${post.shortContent || content.substring(0, 150)} ${tags}`;
     case 'whatsapp_status':
-      return `📢 *${title}*\n\n${post.shortContent || content.substring(0, 250)}\n\n📞 +228 90 74 84 65`;
+      return `*${title}*\n\n${post.shortContent || content.substring(0, 250)}\n\nTél. : +228 90 74 84 65`;
     case 'whatsapp_channel':
-      return `📣 *OPTINET SARLU*\n\n*${title}*\n\n${content}${link}${contact}\n\n${tags}`;
+      return `*OPTINET SARLU*\n\n*${title}*\n\n${content}${link}${contact}\n\n${tags}`;
     default:
       return `${title}\n\n${content}`;
   }
@@ -277,7 +277,7 @@ router.post('/', protect, [
 
     res.status(201).json({ success: true, post });
   } catch (err) {
-    console.error('❌ ERREUR POST /posts:', (err && err.stack) || err);
+    console.error('[ERREUR] POST /posts:', (err && err.stack) || err);
     res.status(500).json({ success: false, message: err.message });
   }
 });
@@ -379,12 +379,12 @@ router.post('/actualite', protect, async (req, res) => {
         })),
       });
     } catch (e) {
-      console.error('⚠️ Publication Studio réussie mais non enregistrée dans l\'historique:', e.message);
+      console.error('[ATTENTION] Publication Studio réussie mais non enregistrée dans l\'historique:', e.message);
     }
 
     res.status(someOk ? 200 : 502).json({ success: someOk, results });
   } catch (err) {
-    console.error('❌ ERREUR POST /posts/actualite:', (err && err.stack) || err);
+    console.error('[ERREUR] POST /posts/actualite:', (err && err.stack) || err);
     res.status(500).json({ success: false, message: err.message });
   }
 });

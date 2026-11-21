@@ -53,15 +53,16 @@ button{font:inherit;}
 
 .cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .service-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:28px;box-shadow:0 18px 50px rgba(16,42,67,.06);}
-.card-icon{width:52px;height:52px;border-radius:18px;background:rgba(13,153,214,.1);display:grid;place-items:center;font-size:1.35rem;margin-bottom:18px;}
+.card-icon{width:52px;height:52px;border-radius:18px;background:rgba(13,153,214,.1);color:var(--accent-dark);display:grid;place-items:center;margin-bottom:18px;}
+.card-icon svg{width:24px;height:24px;display:block;}
 .service-card h3{font-size:1.1rem;margin-bottom:12px;}
 .service-card p{color:var(--muted);line-height:1.85;}
 
 .grid-2cols{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center;}
 .text-block p{font-size:1.03rem;color:var(--muted);margin-bottom:26px;}
 .checklist{list-style:none;padding:0;margin:0;display:grid;gap:14px;}
-.checklist li{display:flex;gap:12px;font-size:1rem;color:var(--text);}
-.checklist li::before{content:'✓';color:var(--accent);font-weight:700;}
+.checklist li{display:flex;align-items:flex-start;gap:12px;font-size:1rem;color:var(--text);}
+.checklist li::before{content:'';width:18px;height:18px;flex:0 0 18px;margin-top:4px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230d99d6' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;}
 
 .stats-panel{display:grid;gap:20px;}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:28px;box-shadow:0 18px 50px rgba(16,42,67,.05);}

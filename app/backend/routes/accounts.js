@@ -10,16 +10,14 @@ const router = express.Router();
 
 // Infos des plateformes
 const PLATFORM_INFO = {
-  facebook:          { label: 'Facebook',                    icon: '📘', color: '#1877F2', api: 'Meta Graph API' },
-  facebook_personal: { label: 'Facebook — Profil Personnel',icon: '👤', color: '#1877F2', api: 'Meta Graph API' },
-  instagram:         { label: 'Instagram',                   icon: '📸', color: '#dc2743', api: 'Meta Graph API' },
-  linkedin:          { label: 'LinkedIn',                    icon: '💼', color: '#0A66C2', api: 'Posts API' },
-  youtube:           { label: 'YouTube',                     icon: '▶️', color: '#FF0000', api: 'YouTube Data API v3' },
-  x:                 { label: 'X (Twitter)',                 icon: '𝕏',  color: '#000',    api: 'Twitter API v2' },
-  tiktok:            { label: 'TikTok',                      icon: '🎵', color: '#010101', api: 'Content Posting API' },
-  whatsapp_status:   { label: 'WhatsApp Status',             icon: '💬', color: '#25D366', api: 'WhatsApp Business API' },
-  whatsapp_channel:  { label: 'WhatsApp Business Channel',   icon: '📢', color: '#128C7E', api: 'WhatsApp Business API' },
-  website:           { label: 'Site Web OPTINET',            icon: '🌐', color: '#007B9A', api: 'Site Web / Galerie' },
+  facebook: { label: 'Facebook', icon: '/assets/icons/facebook.svg', color: '#1877F2', api: 'Meta Graph API' },
+  facebook_personal: { label: 'Facebook — Profil Personnel', icon: '/assets/icons/facebook_personal.svg', color: '#1877F2', api: 'Meta Graph API' },
+  instagram: { label: 'Instagram', icon: '/assets/icons/instagram.svg', color: '#dc2743', api: 'Meta Graph API' },
+  linkedin: { label: 'LinkedIn', icon: '/assets/icons/linkedin.svg', color: '#0A66C2', api: 'Posts API' },
+  youtube: { label: 'YouTube', icon: '/assets/icons/youtube.svg', color: '#FF0000', api: 'YouTube Data API v3' },
+  x: { label: 'X (Twitter)', icon: '/assets/icons/x.svg', color: '#000', api: 'Twitter API v2' },
+  tiktok: { label: 'TikTok', icon: '/assets/icons/tiktok.svg', color: '#010101', api: 'Content Posting API' },
+  website: { label: 'Site Web OPTINET', icon: '/assets/icons/website.svg', color: '#007B9A', api: 'Site Web / Galerie' },
 };
 
 // GET /api/accounts — liste des comptes connectés
@@ -130,6 +128,13 @@ router.put('/:platform/refresh', protect, async (req, res) => {
       message: `Token ${account.platform} renouvelé`,
     });
   } catch (err) {
+    if (err && (err.name === 'LinkedInError' || err.name === 'XOAuthError')) {
+      return res.status(409).json({
+        success: false,
+        requiresOAuth: true,
+        message: `Renouvellement ${req.params.platform} refusé (${err.message}). Reconnexion OAuth requise.`,
+      });
+    }
     res.status(500).json({ success: false, message: err.message });
   }
 });
@@ -174,7 +179,13 @@ router.post('/facebook-personal/sync', protect, async (req, res) => {
         userName = me.name + ' (Profil Perso)';
         userId = me.id;
       }
-    } catch (_) {}
+    } catch (err) {
+      return res.status(409).json({
+        success: false,
+        requiresOAuth: true,
+        message: `Token Facebook invalide ou expiré (${err.message}). Reconnexion OAuth requise.`,
+      });
+    }
 
     const account = await SocialAccount.findOneAndUpdate(
       { userId: req.user._id, platform: 'facebook_personal' },

@@ -70,7 +70,7 @@ cron.schedule('* * * * *', async () => {
     });
 
     for (const post of duePosts) {
-      console.log(`⏰ Publication programmée: ${post.title}`);
+      console.log(`[CRON] Publication programmée: ${post.title}`);
       post.status = 'publishing';
       await post.save();
       // Déclencher la publication (même logique que /publish)

@@ -6,93 +6,111 @@ const router = express.Router();
 // Bibliothèque complète de hashtags OPTINET
 const HASHTAG_LIBRARY = {
   brand: {
-    label: '🏷️ Marque OPTINET',
+    label: 'Marque OPTINET',
+    icon: 'tag',
     tags: ['#OPTINET', '#OptiNetSARLU', '#SolutionsTech', '#OPTIPUB', '#PublishEverywhere']
   },
   geo_togo: {
-    label: '📍 Togo — Villes',
+    label: 'Togo — Villes',
+    icon: 'map-pin',
     tags: ['#Togo', '#Sokodé', '#Kara', '#Lomé', '#Atakpamé', '#Dapaong', '#Tsévié', '#Notsé']
   },
   geo_africa: {
-    label: '🌍 Afrique de l\'Ouest',
+    label: 'Afrique de l\'Ouest',
+    icon: 'globe',
     tags: ['#AfriqueDeLOuest', '#WestAfrica', '#Africa', '#Afrique', '#CEDEAO', '#UEMOA']
   },
   telecom: {
-    label: '📡 Télécoms & Internet',
+    label: 'Télécoms & Internet',
+    icon: 'radio',
     tags: ['#FibreOptique', '#InternetTogo', '#ConnexionRapide', '#WiFi', '#HautDébit',
-           '#4G', '#5G', '#Réseau', '#Telecom', '#ISP', '#FAI']
+      '#4G', '#5G', '#Réseau', '#Telecom', '#ISP', '#FAI']
   },
   tech: {
-    label: '💻 Technologie & Digital',
+    label: 'Technologie & Digital',
+    icon: 'cpu',
     tags: ['#TechAfrique', '#NumériqueTogo', '#Digitalisation', '#Innovation', '#IT',
-           '#Informatique', '#AfricaTech', '#TransitionNumérique', '#DigitalAfrica']
+      '#Informatique', '#AfricaTech', '#TransitionNumérique', '#DigitalAfrica']
   },
   commercial: {
-    label: '📡 Offres Commerciales',
+    label: 'Offres Commerciales',
+    icon: 'shopping-bag',
     tags: ['#Promo', '#OffreSpéciale', '#BonPlan', '#InternetPasChèr',
-           '#AbonnementInternet', '#FCFA', '#Commerce', '#Offre']
+      '#AbonnementInternet', '#FCFA', '#Commerce', '#Offre']
   },
   emploi: {
-    label: '💼 Emploi & Recrutement',
+    label: 'Emploi & Recrutement',
+    icon: 'briefcase',
     tags: ['#EmploiTogo', '#Recrutement', '#JobTogo', '#Carrière',
-           '#TechnicienRéseau', '#IngénieurTelecom', '#JobAfrique']
+      '#TechnicienRéseau', '#IngénieurTelecom', '#JobAfrique']
   },
   business: {
-    label: '🏢 Business & Entreprise',
+    label: 'Business & Entreprise',
+    icon: 'building',
     tags: ['#PMETogo', '#Startup', '#EntrepriseTogo', '#BusinessAfrique',
-           '#Entrepreneuriat', '#SARLU', '#InvestirTogo']
+      '#Entrepreneuriat', '#SARLU', '#InvestirTogo']
   },
   community: {
-    label: '🎉 Communauté Togo',
+    label: 'Communauté Togo',
+    icon: 'users',
     tags: ['#TogoForward', '#FierDuTogo', '#TogoBusiness', '#CommunautéTogo',
-           '#MadeInTogo', '#TogoInnovation', '#PrideTogo']
+      '#MadeInTogo', '#TogoInnovation', '#PrideTogo']
   },
   noel: {
-    label: '🎄 Noël en Brousse & Fêtes',
+    label: 'Noël en Brousse & Fêtes',
+    icon: 'tree',
     tags: ['#NoelAuTogo', '#NoelEnBrousse', '#FetesDeFinDannee', '#OPTINET', '#SolidariteTogo',
-           '#Sokodé', '#Kara', '#Lomé', '#InternetPourTous', '#BonneAnnee2027', '#SolutionsTech']
+      '#Sokodé', '#Kara', '#Lomé', '#InternetPourTous', '#BonneAnnee2027', '#SolutionsTech']
   },
 };
 
 // Formules prêtes par catégorie de publication
 const READY_FORMULAS = {
   offre: {
-    label: '📡 Offre Internet',
+    label: 'Offre Internet',
+    icon: 'radio',
     description: 'Portée maximale pour les offres commerciales',
     tags: '#OPTINET #FibreOptique #InternetTogo #ConnexionRapide #Togo #Sokodé #TechAfrique #BonPlan #OffreSpéciale #SolutionsTech'
   },
   actu: {
-    label: '📰 Actualité OPTINET',
+    label: 'Actualité OPTINET',
+    icon: 'newspaper',
     description: 'Nouvelles et annonces de l\'entreprise',
     tags: '#OPTINET #SolutionsTech #Togo #NumériqueTogo #TechAfrique #Sokodé #Innovation'
   },
   emploi: {
-    label: '💼 Recrutement',
+    label: 'Recrutement',
+    icon: 'briefcase',
     description: 'Offres d\'emploi — portée maximum sur LinkedIn & Facebook',
     tags: '#OPTINET #EmploiTogo #Recrutement #JobTogo #TechnicienRéseau #Togo #Telecom #SolutionsTech #Carrière'
   },
   event: {
-    label: '🎉 Événement / Communauté',
+    label: 'Événement / Communauté',
+    icon: 'users',
     description: 'Événements, fêtes, communauté togolaise',
     tags: '#OPTINET #Togo #TogoForward #FierDuTogo #MadeInTogo #CommunautéTogo #TogoBusiness #Innovation'
   },
   tech: {
-    label: '🔧 Info Technique',
+    label: 'Info Technique',
+    icon: 'wrench',
     description: 'Maintenance, mise à jour réseau',
     tags: '#OPTINET #FibreOptique #Réseau #Telecom #Innovation #SolutionsTech #Togo #Maintenance'
   },
   promo: {
-    label: '🎁 Promotion Spéciale',
+    label: 'Promotion Spéciale',
+    icon: 'gift',
     description: 'Réductions, offres limitées',
     tags: '#OPTINET #Promo #BonPlan #InternetPasChèr #OffreSpéciale #Togo #FCFA #Commerce'
   },
   comm: {
-    label: '🌍 Portée Max Afrique',
+    label: 'Portée Max Afrique',
+    icon: 'globe',
     description: 'Visibilité maximale sur toute l\'Afrique de l\'Ouest',
     tags: '#OPTINET #Togo #Africa #AfriqueDeLOuest #AfricaTech #NumériqueTogo #Digitalisation #TransitionNumérique #WestAfrica'
   },
   noel: {
-    label: '🎄 Noël en Brousse & Fêtes',
+    label: 'Noël en Brousse & Fêtes',
+    icon: 'tree',
     description: 'Campagne festive, solidarité et connectivité pour les fêtes de fin d\'année',
     tags: '#OPTINET #NoelEnBrousse #NoelAuTogo #SolidariteTogo #Sokodé #Togo #FibreOptique #BonneAnnee2027 #SolutionsTech'
   },
